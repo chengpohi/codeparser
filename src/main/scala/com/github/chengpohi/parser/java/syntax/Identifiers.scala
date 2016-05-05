@@ -1,4 +1,4 @@
-package com.github.chengpohi.parser.syntax
+package com.github.chengpohi.parser.java.syntax
 
 import Basic._
 import fastparse.all._

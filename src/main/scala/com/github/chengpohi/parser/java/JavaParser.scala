@@ -1,5 +1,6 @@
-package com.github.chengpohi.parser.syntax
+package com.github.chengpohi.parser.java
 
+import com.github.chengpohi.parser.java.syntax.{Core, Exprs, Types}
 import fastparse.noApi._
 
 import scala.language.implicitConversions
@@ -7,7 +8,7 @@ import scala.language.implicitConversions
 /**
  * Parser for Scala syntax.
  */
-object Scala extends Core with Types with Exprs{
+class JavaParser extends Core with Types with Exprs{
   import WhitespaceApi._
 
   val TmplBody: P0 = {

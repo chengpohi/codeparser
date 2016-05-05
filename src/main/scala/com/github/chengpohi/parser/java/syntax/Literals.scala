@@ -1,6 +1,6 @@
-package com.github.chengpohi.parser.syntax
+package com.github.chengpohi.parser.java.syntax
 
-import com.github.chengpohi.parser.syntax.Identifiers._
+import com.github.chengpohi.parser.java.syntax.Identifiers._
 import fastparse.all._
 import fastparse.parsers.Intrinsics
 

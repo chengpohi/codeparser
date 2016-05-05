@@ -1,4 +1,4 @@
-package com.github.chengpohi.parser.syntax
+package com.github.chengpohi.parser.java.syntax
 
 import fastparse.noApi._
 
