@@ -1,4 +1,4 @@
-package com.github.chengpohi.parser
+package com.github.chengpohi.parser.syntax
 
 import fastparse.all._
 
@@ -33,3 +33,8 @@ object Basic {
   val Upper = P(CharPred(_.isUpper))
 }
 
+object Key {
+  def W(s: String) = P( s ~ !Basic.LetterDigitDollarUnderscore )
+  // If the operator is followed by a comment, stop early so we can parse the comment
+  def O(s: String) = P( s ~ (!Basic.OpChar | &("/*" | "//")) )
+}
