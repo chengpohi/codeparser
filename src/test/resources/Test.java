@@ -1,3 +1,8 @@
-class Test {
+/**
+ * asdfasdfasdf
+ */
+package pp
+import ff
+class TT{
 
 }

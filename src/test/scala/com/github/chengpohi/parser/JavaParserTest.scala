@@ -12,17 +12,17 @@ import scala.io.Source
   */
 class JavaParserTest extends FlatSpec {
   val javaParser = new JavaParser
-  val testClassSource: String = Source.fromURL(getClass.getResource("/Test.java")).getLines().mkString("\\n")
+  val testClassSource: String = Source.fromURL(getClass.getResource("/Test.java")).getLines().mkString("\n")
 
   "Java Parser" should "parse java source file" in {
-    check(testClassSource, "")
+    check(testClassSource)
   }
 
-  def check(input: String, expect: String) = {
+  def check(input: String) = {
     val res = javaParser.CompilationUnit.parse(input)
     res match {
       case f: Parsed.Failure =>
-        throw new Exception(expect + "\n" + input + "\n" + f.extra.traced.trace)
+        throw new Exception(input + "\n" + f.extra.traced.trace)
       case s: Parsed.Success[_] =>
         val inputLength = input.length
         assert(s.index == inputLength)

@@ -21,7 +21,7 @@ trait Literals { l =>
   val WS = P( NoCut(NoTrace((Basic.WSChars | Literals.Comment).rep)) )
 
   /**
-    * Parses whitespace, including newlines.
+    * Parses whitespace, including newlines and Comment.
     * This is the default for most things
     */
   val WL0 = P( NoTrace((Basic.WSChars | Literals.Comment | Basic.Newline).rep) )

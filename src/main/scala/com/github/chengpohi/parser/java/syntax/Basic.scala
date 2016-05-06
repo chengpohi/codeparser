@@ -18,6 +18,7 @@ object Basic {
   val Exp = P(CharIn("Ee") ~ CharIn("+-").? ~ DecNum)
   val FloatType = P(CharIn("fFdD"))
 
+  //space and tab
   val WSChars = P(CharsWhile("\u0020\u0009".contains(_)))
   val Newline = P(StringIn("\r\n", "\n"))
   val Semi = P(";" | Newline.rep(1))
