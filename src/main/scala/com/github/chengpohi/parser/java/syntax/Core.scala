@@ -30,6 +30,7 @@ trait Core extends Literals{
   val `class` = W("class")
   val `case` = W("case")
   val `trait` = W("trait")
+  val `interface` = W("interface")
   val `extends` = W("extends")
   val `implicit` = W("implicit")
   val `try` = W("try")
@@ -60,6 +61,7 @@ trait Core extends Literals{
   val `sealed` = W("sealed")
   val `private` = W("private")
   val `protected` = W("protected")
+  val `public` = W("public")
 
 
   // kinda-sorta keywords that are common patterns even if not
@@ -68,15 +70,14 @@ trait Core extends Literals{
   val `_*` = P( `_` ~ `*` )
   val `}` = P( Semis.? ~ "}" )
   val `{` = P( "{" ~ Semis.? )
-  /**
-   * helper printing function
-   */
 
+  //id name
   val Id = P( WL ~ Identifiers.Id )
   val VarId = P( WL ~ Identifiers.VarId )
   val ExprLiteral = P( WL ~ Literals.Expr.Literal )
   val PatLiteral = P( WL ~ Literals.Pat.Literal )
 
+  //import namespace
   val QualId = P( WL ~ Id.rep(1, sep = ".") )
   val Ids = P( Id.rep(1, sep = ",") )
 

@@ -1,8 +1,15 @@
 /**
- * asdfasdfasdf
+ * ffff
  */
-package pp
-import ff
-class TT{
+package com;
+import a.b.c;
+@PP(name="",ff="")
+public /*fff*/ class A {
+    val a=0;
+}
+interface B {
+
+}
+abstract class C {
 
 }

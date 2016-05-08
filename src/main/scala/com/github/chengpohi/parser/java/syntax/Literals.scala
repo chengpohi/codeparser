@@ -14,7 +14,7 @@ trait Literals { l =>
   def Block: P0
 
   /**
-    * Parses all whitespace, excluding newlines. This is only
+    * Parses all whitespace(space, tab) and comment, excluding newlines. This is only
     * really useful in e.g. {} blocks, where we want to avoid
     * capturing newlines so semicolon-inference would work
     */
@@ -28,6 +28,7 @@ trait Literals { l =>
   val WL = P( NoCut(WL0) )
 
   val Semi = P( WS ~ Basic.Semi )
+  //semis, space, tab, newline or comment
   val Semis = P( Semi.rep(1) ~ WS )
   val Newline = P( WL ~ Basic.Newline )
 

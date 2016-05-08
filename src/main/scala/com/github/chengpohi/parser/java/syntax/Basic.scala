@@ -28,9 +28,11 @@ object Basic {
     fastparse.CharPredicates.isOtherSymbol(c) || fastparse.CharPredicates.isMathSymbol(c) || "!%&*+-/:<=>?@\\^|~".contains(c)
   }
 
+  //is letter
   val Letter = P(CharPred(c => c.isLetter | c.isDigit))
   val LetterDigitDollarUnderscore = P(CharPred(c => c.isLetter | c.isDigit))
   val Lower = P(CharPred(c => c.isLower))
+  //is Upper
   val Upper = P(CharPred(_.isUpper))
 }
 
