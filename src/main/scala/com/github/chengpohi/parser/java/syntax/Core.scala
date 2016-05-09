@@ -32,6 +32,7 @@ trait Core extends Literals{
   val `trait` = W("trait")
   val `interface` = W("interface")
   val `extends` = W("extends")
+  val `implements` = W("implements")
   val `implicit` = W("implicit")
   val `try` = W("try")
   val `new` = W("new")

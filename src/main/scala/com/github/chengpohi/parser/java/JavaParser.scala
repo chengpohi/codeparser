@@ -12,9 +12,10 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
+  //class/interface/abstract class Body
   val TmplBody: P0 = {
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
-    val TmplStat = P(Import | Prelude ~ BlockDef | StatCtx.Expr)
+    val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
 
     P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
   }
@@ -31,25 +32,20 @@ class JavaParser extends Core with Types with Exprs {
   val ClsDef = {
     val ClsAnnot = P(`@` ~ SimpleType ~ ArgList.?)
     val Prelude = P(NotNewline ~ (ClsAnnot.rep(1) ~ AccessMod.? | AccessMod))
-    val ClsArgMod = P(Mod.rep ~ (`val` | `var`))
-    val ClsArg = P(Annot.rep ~ ClsArgMod.? ~ Id ~ `:` ~ Type ~ (`=` ~ ExprCtx.Expr).?)
 
-    val ClsArgs = P(OneNLMax ~ "(" ~/ `implicit`.? ~ ClsArg.rep(sep = ",".~/) ~ ")")
-    P(`class` ~/ Id ~~ Prelude.? ~~ ClsArgs.repX ~ DefTmpl.?)
+    P(`class` ~/ Id ~~ Prelude.? ~ DefTmpl.?)
   }
 
-  val Constrs = P((WL ~ Constr).rep(1, `with`.~/))
-  val EarlyDefTmpl = P(TmplBody ~ (`with` ~/ Constr).rep ~ TmplBody.?)
+  val Constrs = P((WL ~ Constr).rep(1, `implements`.~/))
   val NamedTmpl = P(Constrs ~ TmplBody.?)
-
-  val DefTmpl = P((`extends` | `<:`) ~ AnonTmpl | TmplBody)
-  val AnonTmpl = P(EarlyDefTmpl | NamedTmpl | TmplBody)
+  val DefTmpl = P((`extends` | `implements`) ~ AnonTmpl | TmplBody)
+  val AnonTmpl = P(NamedTmpl | TmplBody)
 
   val InterfaceDef = P(`interface` ~/ Id ~ TypeArgList.? ~ DefTmpl.?)
 
   val ObjDef: P0 = P(`case`.? ~ `object` ~/ Id ~ DefTmpl.?)
 
-  val Constr = P(AnnotType ~~ (NotNewline ~ ParenArgList).repX)
+  val Constr = P(AnnotType)
 
   val PkgObj = P(ObjDef)
   val PkgBlock = P(QualId ~/ `{` ~ TopStatSeq.? ~ `}`)
