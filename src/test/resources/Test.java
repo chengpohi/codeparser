@@ -10,7 +10,7 @@ public /*fff*/ class A extends C implements D{
     @TT(fff="")
     class E {
     }
-    def m() {
+    String m() {
 
     }
     {
@@ -19,10 +19,10 @@ public /*fff*/ class A extends C implements D{
     }
 }
 interface B {
-    String a;
+    String a();
 }
 abstract class C {
-
+    String a();
 }
 
 class D implements A {

@@ -19,14 +19,14 @@ trait Types extends Core {
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
   val Dcl: P0 = {
-    P(Pass ~ ((ValVarDef) | (`def` ~/ FunDef) | (`type` ~/ TypeDef)))
+    P(Pass ~ ((Type ~ WL ~/ FunDef)))
   }
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
 
   val ExistentialClause = P(`forSome` ~/ `{` ~ Dcl.repX(1, Semis) ~ `}`)
-  val PostfixType = P(InfixType ~ (`=>` ~/ Type | ExistentialClause).?)
-  val Type: P0 = P(`=>`.? ~~ PostfixType ~ TypeBounds ~ `*`.?)
+  val PostfixType = P(InfixType)
+  val Type: P0 = P(PostfixType)
 
 
   // Can't cut after `Id` because it may be a `*`, in which case
@@ -45,9 +45,7 @@ trait Types extends Core {
   val SimpleType: P0 = {
     // Can't `cut` after the opening paren, because we might be trying to parse `()`
     // or `() => T`! only cut after parsing one type
-    val TupleType = P("(" ~/ Type.rep(sep = ",".~/) ~ ")")
-    val BasicType = P(TupleType | TypeId ~ ("." ~ `type`).? | `_`)
-    P(BasicType ~ (Pass ~ (TypeArgs | `#` ~/ Id)).rep)
+    P(TypeId)
   }
 
   val TypeArgs = P("[" ~/ Type.rep(sep = ",".~/) ~ "]")
