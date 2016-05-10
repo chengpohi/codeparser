@@ -119,7 +119,7 @@ trait Exprs extends Core with Types{
   val BindPattern: P0 = {
     val InfixPattern = P( SimplePattern ~ (Id ~/ SimplePattern).rep | `_*` )
     val Binding = P( (VarId | `_`) ~ `@` )
-    P( Binding ~ InfixPattern | InfixPattern | VarId )
+    P( VarId )
   }
 
   val TypePat = P( CompoundType )

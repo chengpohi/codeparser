@@ -5,17 +5,21 @@ package com;
 import a.b.c;
 @PP(name="",ff="")
 public /*fff*/ class A extends C implements D{
-    val a=0;
-    {
-
-    }
-
+    private String a=0;
+    String b=0;
     @TT(fff="")
     class E {
     }
+    def m() {
+
+    }
+    {
+        Integer a = 0;
+        String a = 0;
+    }
 }
 interface B {
-    val a
+    String a;
 }
 abstract class C {
 

@@ -19,7 +19,7 @@ trait Types extends Core {
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
   val Dcl: P0 = {
-    P(Pass ~ ((`val` | `var`) ~/ ValVarDef | `def` ~/ FunDef | `type` ~/ TypeDef))
+    P(Pass ~ ((ValVarDef) | (`def` ~/ FunDef) | (`type` ~/ TypeDef)))
   }
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
@@ -35,9 +35,8 @@ trait Types extends Core {
   val InfixType = P(CompoundType ~~ (NotNewline ~ Id ~~ OneNLMax ~ CompoundType).repX)
 
   val CompoundType = {
-    val Refinement = P(OneNLMax ~ `{` ~/ Dcl.repX(sep = Semis) ~ `}`)
     val NamedType = P((Pass ~ AnnotType).rep(1, `with`.~/))
-    P(NamedType ~~ Refinement.? | Refinement)
+    P(NamedType)
   }
   val NLAnnot = P(NotNewline ~ Annot)
   val AnnotType = P(SimpleType ~~ NLAnnot.repX)

@@ -4,8 +4,13 @@
  */
 public class Test {
     private static String $ff;
+    {
 
+    }
     public static void main(String[] args) {
+        {
+
+        }
     }
 
 }

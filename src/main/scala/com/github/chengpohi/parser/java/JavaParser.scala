@@ -14,13 +14,14 @@ class JavaParser extends Core with Types with Exprs {
 
   //class/interface/abstract class Body
   val TmplBody: P0 = {
+    //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
     val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
 
     P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
   }
 
-  val ValVarDef = P(BindPattern.rep(1, ",".~/) ~ (`:` ~/ Type).? ~ (`=` ~/ StatCtx.Expr).?)
+  val ValVarDef = P(Type ~ BindPattern.rep(1, ",".~/) ~ (`=` ~/ StatCtx.Expr).?)
 
   val FunDef = {
     val Body = P(WL ~ `=` ~/ `macro`.? ~ StatCtx.Expr | OneNLMax ~ "{" ~ Block ~ "}")
