@@ -10,15 +10,17 @@ public /*fff*/ class A extends C implements D{
     @TT(fff="")
     class E {
     }
-    String m(String a) {
+    String m(@MyAnotation String str) {
+    }
+    String m(String str) {
 
     }
 }
 interface B {
-    String a(Integer b);
+    String a();
 }
 abstract class C {
-    String a(float c);
+    String a();
 }
 
 class D implements A {

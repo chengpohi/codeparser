@@ -21,11 +21,11 @@ class JavaParser extends Core with Types with Exprs {
     P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
   }
 
-  val ValVarDef = P(Type ~ BindPattern.rep(1, ",".~/) ~ (`=` ~/ StatCtx.Expr).?)
+  val ValVarDef = P((`=` ~/ StatCtx.Expr).?)
 
   val FunDef = {
-    val Body = P(WL ~ `=` ~/ `macro`.? ~ StatCtx.Expr | OneNLMax ~ "{" ~ Block ~ "}")
-    P(FunSig ~ (`:` ~/ Type).? ~~ Body.?)
+    val Body = P(WL ~ OneNLMax ~ "{" ~ Block ~ "}")
+    P(FunSig ~~ Body.?)
   }
 
   val BlockDef: P0 = P(Dcl | InterfaceDef | ClsDef | ObjDef)

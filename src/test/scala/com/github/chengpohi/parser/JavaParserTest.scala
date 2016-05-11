@@ -12,7 +12,7 @@ import scala.io.Source
   */
 class JavaParserTest extends FlatSpec {
   val javaParser = new JavaParser
-  val testClassSource: String = Source.fromURL(getClass.getResource("/Test.java")).getLines().mkString("\n")
+  val testClassSource: String = Source.fromURL(getClass.getResource("/basic.java")).getLines().mkString("\n")
 
   "Java Parser" should "parse java source file" in {
     check(testClassSource)

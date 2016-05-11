@@ -18,9 +18,7 @@ trait Types extends Core {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: P0 = {
-    P(Pass ~ ((Type ~/ FunDef) | ValVarDef))
-  }
+  val Dcl: P0 = P(Pass ~ Type ~ Id.rep(0, ",".~/) ~ (FunDef | ValVarDef).?)
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
 
@@ -42,11 +40,7 @@ trait Types extends Core {
   val AnnotType = P(SimpleType ~~ NLAnnot.repX)
 
   val TypeId = P(StableId)
-  val SimpleType: P0 = {
-    // Can't `cut` after the opening paren, because we might be trying to parse `()`
-    // or `() => T`! only cut after parsing one type
-    P(TypeId)
-  }
+  val SimpleType: P0 = P(TypeId)
 
   val TypeArgs = P("[" ~/ Type.rep(sep = ",".~/) ~ "]")
 
@@ -54,8 +48,7 @@ trait Types extends Core {
   val FunSig: P0 = {
     val FunArg = P(Annot.rep ~ Type ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
-    val FunArgs = P(OneNLMax ~ "(" ~/ Args.? ~ ")")
-    P(Id  ~~ FunArgs.rep)
+    P(OneNLMax ~ "(" ~/ Args.? ~ ")")
   }
 
   val TypeBounds: P0 = P((Pass ~ `>:` ~/ Type).? ~ (`<:` ~/ Type).?)
