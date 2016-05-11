@@ -19,7 +19,7 @@ trait Types extends Core {
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
   val Dcl: P0 = {
-    P(Pass ~ ((Type ~ WL ~/ FunDef)))
+    P(Pass ~ ((Type ~/ FunDef) | ValVarDef))
   }
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
@@ -52,11 +52,10 @@ trait Types extends Core {
 
 
   val FunSig: P0 = {
-    val FunArg = P(Annot.rep ~ Id ~ (`:` ~/ Type).? ~ (`=` ~/ TypeExpr).?)
+    val FunArg = P(Annot.rep ~ Type ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
-    val FunArgs = P(OneNLMax ~ "(" ~/ (Pass ~ `implicit`).? ~ Args.? ~ ")")
-    val FunTypeArgs = P("[" ~/ (Annot.rep ~ TypeArg).rep(1, ",".~/) ~ "]")
-    P((Id | `this`) ~ (Pass ~ FunTypeArgs).? ~~ FunArgs.rep)
+    val FunArgs = P(OneNLMax ~ "(" ~/ Args.? ~ ")")
+    P(Id  ~~ FunArgs.rep)
   }
 
   val TypeBounds: P0 = P((Pass ~ `>:` ~/ Type).? ~ (`<:` ~/ Type).?)

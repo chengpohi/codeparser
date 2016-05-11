@@ -10,19 +10,15 @@ public /*fff*/ class A extends C implements D{
     @TT(fff="")
     class E {
     }
-    String m() {
+    String m(String a) {
 
-    }
-    {
-        Integer a = 0;
-        String a = 0;
     }
 }
 interface B {
-    String a();
+    String a(Integer b);
 }
 abstract class C {
-    String a();
+    String a(float c);
 }
 
 class D implements A {
