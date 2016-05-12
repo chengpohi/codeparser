@@ -1,10 +1,9 @@
 package com.github.chengpohi.parser
 
+import com.github.chengpohi.parser.TestFileReader.readTestFile
 import com.github.chengpohi.parser.java.JavaParser
 import fastparse.core.Parsed
 import org.scalatest.FlatSpec
-
-import scala.io.Source
 
 /**
   * codeparser
@@ -12,8 +11,11 @@ import scala.io.Source
   */
 class JavaParserTest extends FlatSpec {
   val javaParser = new JavaParser
-  val testClassSource: String = Source.fromURL(getClass.getResource("/basic.java")).getLines().mkString("\n")
-  val lambdaClassSource: String = Source.fromURL(getClass.getResource("/Type.java")).getLines().mkString("\n")
+  val testClassSource: String = readTestFile("/basic.java")
+  private val string: String = readTestFile("/Type.java")
+
+
+  val lambdaClassSource: String = string
 
   "Java Parser" should "parse java source file" in {
     check(testClassSource)
