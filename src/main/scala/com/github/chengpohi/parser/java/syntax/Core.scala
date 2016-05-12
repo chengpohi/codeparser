@@ -85,7 +85,7 @@ trait Core extends Literals{
    * Sketchy way to whitelist a few suffixes that come after a . select;
    * apart from these and IDs, everything else is illegal
    */
-  val PostDotCheck: P0 = P( WL ~ !(`super` | `this` | "{" | `_` | `type`) )
+  val PostDotCheck: P0 = P( WL ~ !(`super` | `this` | `_` | `type`) )
   val StableId: P0 = {
     val ClassQualifier = P( "[" ~ Id ~ "]" )
     val ThisSuper = P( `this` | `super` ~ ClassQualifier.? )

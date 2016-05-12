@@ -31,10 +31,7 @@ class JavaParser extends Core with Types with Exprs {
   val BlockDef: P0 = P(Dcl | InterfaceDef | ClsDef)
 
   val ClsDef = {
-    val ClsAnnot = P(`@` ~ SimpleType ~ ArgList.?)
-    val Prelude = P(NotNewline ~ (ClsAnnot.rep(1) ~ AccessMod.? | AccessMod))
-
-    P(`class` ~/ Id ~~ Prelude.? ~ DefTmpl.?)
+    P(`class` ~/ Id ~ GenericArgList.? ~ DefTmpl.?)
   }
 
   val Constrs = P((WL ~ Constr).rep(1, `implements`.~/))

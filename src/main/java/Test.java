@@ -2,7 +2,7 @@
  * codeparser
  * Created by chengpohi on 5/8/16.
  */
-public class Test {
+public class Test<T> {
     private static String $ff;
     {
 

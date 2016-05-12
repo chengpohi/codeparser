@@ -30,7 +30,7 @@ trait Types extends Core {
   // Can't cut after `Id` because it may be a `*`, in which case
   // we may need to backtrack and settle for the `*`-postfix rather than
   // an infix type
-  val InfixType = P(CompoundType ~~ (NotNewline ~ Id ~~ OneNLMax ~ CompoundType).repX)
+  val InfixType = P(CompoundType ~~ (NotNewline ~ Id ~~ OneNLMax ~ SimpleType).repX)
 
   val CompoundType = {
     val NamedType = P((Pass ~ AnnotType).rep(1, `with`.~/))
@@ -54,7 +54,7 @@ trait Types extends Core {
     P(OneNLMax ~ "(" ~/ Args.? ~ ")")
   }
 
-  val TypeBounds: P0 = P((Pass ~ `>:` ~/ Type).? ~ (`<:` ~/ Type).?)
+  val TypeBounds: P0 = P((Pass ~ `extends` ~/ Type).? )
   val TypeArg: P0 = {
     val CtxBounds = P((`<%` ~/ Type).rep ~ (`:` ~/ Type).rep)
     P((Id | `_`) ~ TypeArgList.? ~ TypeBounds ~ CtxBounds)
@@ -66,6 +66,11 @@ trait Types extends Core {
   val TypeArgList: P0 = {
     val Variant: P0 = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
     P("[" ~/ Variant.rep(1, ",".~/) ~ "]")
+  }
+
+  val GenericArgList: P0 = {
+    val Variant: P0 = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
+    P("<" ~/ Variant.rep(1, ",".~/) ~ ">")
   }
   val Exprs: P0 = P(TypeExpr.rep(1, ",".~/))
   val TypeDef: P0 = P(Id ~ TypeArgList.? ~ (`=` ~/ Type | TypeBounds))
