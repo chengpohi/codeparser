@@ -26,7 +26,6 @@ trait Core extends Literals{
   val `def` = W("def")
   val `with` = W("with")
   val `package` = W("package")
-  val `object` = W("object")
   val `class` = W("class")
   val `case` = W("case")
   val `trait` = W("trait")

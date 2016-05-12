@@ -129,7 +129,7 @@ trait Exprs extends Core with Types {
   val CaseClauses: P0 = {
     // Need to lookahead for `class` and `object` because
     // the block { case object X } is not a case clause!
-    val CaseClause: P0 = P(`case` ~ !(`class` | `object`) ~/ Pattern ~ ExprCtx.Guard.? ~ `=>` ~ Block)
+    val CaseClause: P0 = P(`case` ~ !(`class`) ~/ Pattern ~ ExprCtx.Guard.? ~ `=>` ~ Block)
     P(CaseClause.rep(1) ~ "}")
   }
 }

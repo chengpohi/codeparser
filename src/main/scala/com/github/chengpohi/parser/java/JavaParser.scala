@@ -21,14 +21,14 @@ class JavaParser extends Core with Types with Exprs {
     P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
   }
 
-  val ValVarDef = P((`=` ~/ StatCtx.Expr).?)
+  val VarDefine = P((`=` ~/ StatCtx.Expr).?)
 
   val FunDef = {
     val Body = P(WL ~ OneNLMax ~ "{" ~ Block ~ "}")
     P(FunSig ~~ Body.?)
   }
 
-  val BlockDef: P0 = P(Dcl | InterfaceDef | ClsDef | ObjDef)
+  val BlockDef: P0 = P(Dcl | InterfaceDef | ClsDef)
 
   val ClsDef = {
     val ClsAnnot = P(`@` ~ SimpleType ~ ArgList.?)
@@ -44,13 +44,10 @@ class JavaParser extends Core with Types with Exprs {
 
   val InterfaceDef = P(`interface` ~/ Id ~ TypeArgList.? ~ DefTmpl.?)
 
-  val ObjDef: P0 = P(`case`.? ~ `object` ~/ Id ~ DefTmpl.?)
-
   val Constr = P(AnnotType)
 
-  val PkgObj = P(ObjDef)
   val PkgBlock = P(QualId ~/ `{` ~ TopStatSeq.? ~ `}`)
-  val Pkg = P(`package` ~/ (PkgBlock | PkgObj))
+  val Pkg = P(`package` ~/ PkgBlock)
   val TopStatSeq: P0 = {
     //annotation and class statement
     val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef))

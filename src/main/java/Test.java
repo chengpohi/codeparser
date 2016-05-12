@@ -13,6 +13,10 @@ public class Test {
         }
     }
 
+    public <T, A> void M() {
+
+    }
+
 }
 
 interface B {

@@ -8,7 +8,7 @@ trait Types extends Core {
 
   def TypeExpr: P0
 
-  def ValVarDef: P0
+  def VarDefine: P0
 
   def FunDef: P0
 
@@ -18,7 +18,7 @@ trait Types extends Core {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: P0 = P(Pass ~ Type ~ Id.rep(0, ",".~/) ~ (FunDef | ValVarDef).?)
+  val Dcl: P0 = P(Pass ~ Type ~ Id.rep(0, ",".~/) ~ (FunDef | VarDefine).?)
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
 
@@ -40,7 +40,10 @@ trait Types extends Core {
   val AnnotType = P(SimpleType ~~ NLAnnot.repX)
 
   val TypeId = P(StableId)
-  val SimpleType: P0 = P(TypeId)
+  val SimpleType: P0 = {
+    val BasicType = P(TypeId)
+    P(BasicType ~ (Pass ~ (TypeArgs ~/ Id)).rep)
+  }
 
   val TypeArgs = P("[" ~/ Type.rep(sep = ",".~/) ~ "]")
 
