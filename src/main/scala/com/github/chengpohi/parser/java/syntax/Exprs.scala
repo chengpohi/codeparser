@@ -124,7 +124,11 @@ trait Exprs extends Core with Types {
   val Pattern: P0 = P((WL ~ TypeOrBindPattern).rep(1, sep = "|".~/))
   val TypePattern = P((`_` | VarId) ~ `:` ~ TypePat)
   val TypeOrBindPattern: P0 = P(TypePattern | BindPattern)
-  val BindPattern: P0 = P(VarId)
+  val BindPattern: P0 = {
+    val InfixPattern = P( SimplePattern ~ (Id ~/ SimplePattern).rep | `_*` )
+    val Binding = P( (VarId | `_`) ~ `@` )
+    P( Binding ~ InfixPattern | InfixPattern | VarId )
+  }
 
   val TypePat = P(CompoundType)
   val ParenArgList = P("(" ~/ (Exprs ~ (`:` ~/ `_*`).?).? ~ ")")
