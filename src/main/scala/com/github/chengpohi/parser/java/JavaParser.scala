@@ -18,7 +18,7 @@ class JavaParser extends Core with Types with Exprs {
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
     val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
 
-    P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
+    P("{" ~/ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
   }
 
   val VarDefine = P((`=` ~/ StatCtx.Expr).?)

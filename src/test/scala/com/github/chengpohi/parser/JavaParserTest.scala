@@ -12,14 +12,17 @@ import org.scalatest.FlatSpec
 class JavaParserTest extends FlatSpec {
   val javaParser = new JavaParser
   val testClassSource: String = readTestFile("/basic.java")
-  private val string: String = readTestFile("/Type.java")
-
-
-  val lambdaClassSource: String = string
+  val typeClassSource: String = readTestFile("/Type.java")
+  val lambdaClassSource: String = readTestFile("/Lambda.java")
 
   "Java Parser" should "parse java source file" in {
     check(testClassSource)
   }
+
+  "Java Parser" should "parse types" in {
+    check(typeClassSource)
+  }
+
   "Java Parser" should "parse lambda class" in {
     check(lambdaClassSource)
   }

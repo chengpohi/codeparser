@@ -10,6 +10,8 @@ trait Exprs extends Core with Types {
 
   def BlockDef: P0
 
+  def TmplBody: P0
+
   val Import: P0 = {
     val Selector: P0 = P((Id | `_`) ~ (`=>` ~/ (Id | `_`)).?)
     val Selectors: P0 = P("{" ~/ Selector.rep(sep = ",".~/) ~ "}")
@@ -50,8 +52,10 @@ trait Exprs extends Core with Types {
       val DoWhile = P(`do` ~/ Expr ~ Semi.? ~ `while` ~ "(" ~ ExprCtx.Expr ~ ")")
 
       val For = {
-        val Body = P("(" ~/ ExprCtx.Enumerators ~ ")" | "{" ~/ StatCtx.Enumerators ~ "}")
-        P(`for` ~/ Body ~ `yield`.? ~ Expr)
+        val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
+        val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
+        val Body = P("(" ~/ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ")" ~ OneNLMax ~ TmplBody)
+        P(`for` ~/ Body)
       }
       val Throw = P(`throw` ~/ Expr)
       val Return = P(`return` ~/ Expr.?)

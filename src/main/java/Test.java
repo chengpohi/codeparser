@@ -11,6 +11,10 @@ public class Test<T> {
         {
 
         }
+        int i = 0;
+        for (;i< 30; i++) {
+
+        }
     }
 
     public <T, A> void M() {

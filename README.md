@@ -14,5 +14,7 @@
 - implements
 - generic class
 - generic method
+- for loop
+- while loop
 
 ### Instrumentation
