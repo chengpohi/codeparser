@@ -110,7 +110,7 @@ trait Exprs extends Core with Types {
 
   val BlockChunk = {
     val Prelude = P(Annot.rep ~ `implicit`.? ~ `lazy`.? ~ LocalMod.rep)
-    val BlockStat = P(Import | Prelude ~ BlockDef | StatCtx.Expr)
+    val BlockStat = P(Import | Prelude ~ StatCtx.Expr | BlockDef)
     P(BlockLambda.rep ~ BlockStat.rep(sep = Semis))
   }
 

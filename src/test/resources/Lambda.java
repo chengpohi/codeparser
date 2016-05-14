@@ -1,8 +1,9 @@
-import java.util.ArrayList;
-import java.util.List;
-
 class Lambda {
+    String a = ff.mm(f,p);
     String ff() {
-        method(fff, ppp)
+        String a = 0;
+        ff.tt.method(fff, fff)
+        String pp() {
+        }
     }
 }

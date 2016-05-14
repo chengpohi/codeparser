@@ -11,7 +11,6 @@ public class Test<T> {
     }
     public static void main(String[] args) {
         {
-
         }
         int i = 0;
         for (;i< 30; i++) {
