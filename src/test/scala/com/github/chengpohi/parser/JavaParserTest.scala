@@ -27,6 +27,10 @@ class JavaParserTest extends FlatSpec {
     check(lambdaClassSource)
   }
 
+  "Java Parser" should "parse java classes" in {
+    val dir = "/Users/xiachen/IdeaProjects/9dev/"
+  }
+
   def check(input: String) = {
     val res = javaParser.CompilationUnit.parse(input)
     res match {

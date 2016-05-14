@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * codeparser
  * Created by chengpohi on 5/8/16.
@@ -7,7 +5,6 @@ import java.util.ArrayList;
 public class Test<T> {
     private static String $ff;
     {
-
     }
     public static void main(String[] args) {
         {
