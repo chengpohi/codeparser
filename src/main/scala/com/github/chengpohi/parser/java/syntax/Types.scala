@@ -49,7 +49,7 @@ trait Types extends Core {
 
 
   val FunSig: P0 = {
-    val FunArg = P(Annot.rep ~ Type ~ Id)
+    val FunArg = P(Annot.rep ~ Type ~ WL ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
     P(OneNLMax ~ "(" ~/ Args.? ~ ")")
   }

@@ -90,7 +90,7 @@ trait Core extends Literals{
     val ClassQualifier = P( "[" ~ Id ~ "]" )
     val ThisSuper = P( `this` | `super` ~ ClassQualifier.? )
     val ThisPath: P0 = P( ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep )
-    val IdPath: P0 = P( Id ~ ("." ~ PostDotCheck ~/ (`this` | Id)).rep ~ ("." ~ ThisPath).? )
+    val IdPath: P0 = P( Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).? )
     P( ThisPath | IdPath )
   }
 }

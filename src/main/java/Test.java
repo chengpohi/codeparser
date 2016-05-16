@@ -15,7 +15,7 @@ public class Test<T> {
         }
     }
 
-    public <T, A> void M() {
+    public <T, A> void M(String ... f) {
 
     }
 

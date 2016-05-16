@@ -54,7 +54,7 @@ trait Exprs extends Core with Types {
       val For = {
         val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
         val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
-        val Body = P("(" ~/ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ")" ~ OneNLMax ~ TmplBody)
+        val Body = P("(" ~/ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ")" ~ OneNLMax ~ Expr)
         P(`for` ~/ Body)
       }
       val Throw = P(`throw` ~/ Expr)
