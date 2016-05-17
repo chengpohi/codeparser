@@ -12,14 +12,16 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
-  //class/interface/abstract class Body
-  val TmplBody: P0 = {
+  val TmplBlock: P0 = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
     val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
 
-    P("{" ~/ BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.? ~ `}`)
+    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?)
   }
+
+  //class/interface/abstract class Body
+  val TmplBody: P0 = P("{" ~/ TmplBlock ~ `}`)
 
   val VarDefine = P((`=` ~/ StatCtx.Expr).?)
 
@@ -28,7 +30,7 @@ class JavaParser extends Core with Types with Exprs {
     P(FunSig ~~ Body.?)
   }
 
-  val BlockDef: P0 = P(Dcl | InterfaceDef | ClsDef)
+  val BlockDef: P0 = P(InterfaceDef | EnumDef | ClsDef | Dcl)
 
   val ClsDef = {
     P(`class` ~/ Id ~ GenericArgList.? ~ DefTmpl.?)
@@ -40,6 +42,7 @@ class JavaParser extends Core with Types with Exprs {
   val AnonTmpl = P(NamedTmpl | TmplBody)
 
   val InterfaceDef = P(`interface` ~/ Id ~ TypeArgList.? ~ DefTmpl.?)
+  val EnumDef = P(`enum` ~/ Id ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`)
 
   val Constr = P(AnnotType)
 
@@ -47,7 +50,7 @@ class JavaParser extends Core with Types with Exprs {
   val Pkg = P(`package` ~/ PkgBlock)
   val TopStatSeq: P0 = {
     //annotation and class statement
-    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef))
+    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef | EnumDef))
     val TopStat = P(Pkg | Import | Tmpl)
     P(TopStat.repX(1, Semis))
   }

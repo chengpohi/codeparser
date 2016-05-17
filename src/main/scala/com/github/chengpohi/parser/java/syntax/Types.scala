@@ -13,7 +13,7 @@ trait Types extends Core {
   def FunDef: P0
 
   //modifiers for class
-  val LocalMod: P0 = P(`abstract` | `final`)
+  val LocalMod: P0 = P(`abstract` | `final` | `static`)
   val AccessMod: P0 = {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)

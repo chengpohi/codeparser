@@ -8,5 +8,4 @@ package com.github.chengpohi
 object App {
   def main(args: Array[String]): Unit = {
   }
-
 }

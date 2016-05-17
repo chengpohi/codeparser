@@ -30,6 +30,7 @@ trait Core extends Literals{
   val `case` = W("case")
   val `trait` = W("trait")
   val `interface` = W("interface")
+  val `enum` = W("enum")
   val `extends` = W("extends")
   val `implements` = W("implements")
   val `implicit` = W("implicit")
@@ -62,6 +63,7 @@ trait Core extends Literals{
   val `private` = W("private")
   val `protected` = W("protected")
   val `public` = W("public")
+  val `static` = W("static")
 
 
   // kinda-sorta keywords that are common patterns even if not

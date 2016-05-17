@@ -19,8 +19,19 @@ public class Test<T> {
 
     }
 
+    interface B {
+        String f();
+        String c();
+    }
 }
 
 interface B {
 
+}
+
+enum C {
+    A;
+    private String getFF() {
+        return "";
+    }
 }

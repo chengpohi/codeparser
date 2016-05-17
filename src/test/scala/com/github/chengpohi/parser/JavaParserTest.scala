@@ -11,29 +11,33 @@ import org.scalatest.FlatSpec
   */
 class JavaParserTest extends FlatSpec {
   val javaParser = new JavaParser
-  val testClassSource: String = readTestFile("/basic.java")
-  val typeClassSource: String = readTestFile("/Type.java")
-  val lambdaClassSource: String = readTestFile("/Lambda.java")
-  val vargs: String = readTestFile("/Vargs.java")
-  val test: String = readTestFile("/Test.java")
 
   "Java Parser" should "parse java source file" in {
+    val testClassSource: String = readTestFile("/basic.java")
     check(testClassSource)
   }
 
   "Java Parser" should "parse types" in {
+    val typeClassSource: String = readTestFile("/Type.java")
     check(typeClassSource)
   }
 
   "Java Parser" should "parse lambda class" in {
+    val lambdaClassSource: String = readTestFile("/Lambda.java")
     check(lambdaClassSource)
   }
 
   "Java Parser" should "parse vargs" in {
+    val vargs: String = readTestFile("/Vargs.java")
     check(vargs)
   }
 
+  "Java Parser" should "parse enum" in {
+    val enum: String = readTestFile("/Enum.java")
+    check(enum)
+  }
   "Java Parser" should "parse test" in {
+    val test: String = readTestFile("/Test.java")
     check(test)
   }
 
