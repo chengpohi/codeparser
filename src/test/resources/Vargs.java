@@ -40,8 +40,9 @@ public class Vargs extends PrintWriter {
     {
         int size = level * indentWidth ;
         StringBuffer sbuf = new StringBuffer( size ) ;
-        for (int ctr = 0; ctr<size; ctr++ )
+        for (int ctr = 0; ctr<size; ctr++ ) {
             sbuf.append( " " ) ;
+        }
         indentString = sbuf.toString() ;
     }
 }

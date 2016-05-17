@@ -36,6 +36,12 @@ class JavaParserTest extends FlatSpec {
     val enum: String = readTestFile("/Enum.java")
     check(enum)
   }
+
+  "Java Parser" should "parse switch" in {
+    val switch: String = readTestFile("/Switch.java")
+    check(switch)
+  }
+
   "Java Parser" should "parse test" in {
     val test: String = readTestFile("/Test.java")
     check(test)

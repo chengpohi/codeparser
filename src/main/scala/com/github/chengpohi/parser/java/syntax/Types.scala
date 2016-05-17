@@ -18,7 +18,7 @@ trait Types extends Core {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: P0 = P(Pass ~ Type ~ Id.rep(0, ",".~/) ~ (FunDef | VarDefine).?)
+  val Dcl: P0 = P(Pass ~ Type.rep ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?)
 
   val Mod: P0 = P(LocalMod | AccessMod | `override`)
 
@@ -30,7 +30,7 @@ trait Types extends Core {
   // Can't cut after `Id` because it may be a `*`, in which case
   // we may need to backtrack and settle for the `*`-postfix rather than
   // an infix type
-  val InfixType = P(CompoundType ~~ (NotNewline ~ Id ~~ OneNLMax ~ SimpleType).repX)
+  val InfixType = P(NotNewline ~ SimpleType)
 
   val CompoundType = {
     val NamedType = P((Pass ~ AnnotType).rep(1, `with`.~/))
@@ -42,19 +42,20 @@ trait Types extends Core {
   val TypeId = P(StableId)
   val SimpleType: P0 = {
     val BasicType = P(TypeId)
-    P(BasicType ~ (Pass ~ (TypeArgs ~/ Id)).rep)
+    P(BasicType ~ TypeArgs.? ~ "[]".?)
   }
 
-  val TypeArgs = P("[" ~/ Type.rep(sep = ",".~/) ~ "]")
+  val TypeArgs = P("<" ~ Type.rep(sep = ",".~/) ~ ">")
 
 
   val FunSig: P0 = {
-    val FunArg = P(Annot.rep ~ Type ~ WL ~ Id)
+    val FunArg = P(Annot.rep ~ `final`.? ~ Type ~ WL ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
+    val FunTypeArgs = P("[" ~/ (Annot.rep ~ TypeArg).rep(1, ",".~/) ~ "]")
     P(OneNLMax ~ "(" ~/ Args.? ~ ")")
   }
 
-  val TypeBounds: P0 = P((Pass ~ `extends` ~/ Type).? )
+  val TypeBounds: P0 = P((Pass ~ `extends` ~/ Type).?)
   val TypeArg: P0 = {
     val CtxBounds = P((`<%` ~/ Type).rep ~ (`:` ~/ Type).rep)
     P((Id | `_`) ~ TypeArgList.? ~ TypeBounds ~ CtxBounds)

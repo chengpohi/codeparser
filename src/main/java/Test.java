@@ -4,25 +4,29 @@
  */
 public class Test<T> {
     private static String $ff;
+
     {
     }
+
     public static void main(String[] args) {
         {
         }
         int i = 0;
-        for (;i< 30; i++) {
+        for (; i < 30; i++) {
 
         }
     }
 
-    public <T, A> void M(String ... f) {
+    public <T, A> void M(String... f) {
 
     }
 
     interface B {
         String f();
+
         String c();
     }
+
 }
 
 interface B {
@@ -31,6 +35,7 @@ interface B {
 
 enum C {
     A;
+
     private String getFF() {
         return "";
     }
