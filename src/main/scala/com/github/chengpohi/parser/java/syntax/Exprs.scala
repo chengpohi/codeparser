@@ -44,13 +44,13 @@ trait Exprs extends Core with Types {
         P(`if` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ Expr ~ Else.?)
       }
 
-      val Break = P("break;")
+      val Break = P("break")
+      val CaseClause: P0 = P(`case` ~/ ExprCtx.Expr ~ `:` ~/ Block)
+      val DefaultClause: P0 = P(`default` ~/ `:` ~/ Block)
 
       val While = P(`while` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ Expr)
       val Switch = {
-        val caseClause: P0 = P(`case` ~/ ExprCtx.Expr ~ `:` ~ Expr.?)
-        val default: P0 = P("default" ~ `:` ~ Expr.rep.?)
-        P(`switch` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ `{` ~ caseClause.rep ~ default.? ~ "}")
+        P(`switch` ~/ "(" ~ "state" ~ ")" ~ "{" ~/ Expr ~ "}")
       }
       val Try = {
         val Catch = P(`catch` ~/ Expr)
@@ -75,7 +75,7 @@ trait Exprs extends Core with Types {
       val PostfixLambda = P(PostfixExpr ~ (`=>` ~ LambdaRhs.?).?)
       val SmallerExprOrLambda = P(ParenedLambda | PostfixLambda)
       P(
-        If | Switch | Break | While | Try | DoWhile | For | Throw | Return |
+        If | CaseClause | DefaultClause | Switch | Break | While | Try | DoWhile | For | Throw | Return |
           ImplicitLambda | SmallerExprOrLambda
       )
     }

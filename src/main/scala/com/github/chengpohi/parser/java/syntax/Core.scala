@@ -28,6 +28,7 @@ trait Core extends Literals{
   val `package` = W("package")
   val `class` = W("class")
   val `case` = W("case")
+  val `default` = W("default")
   val `trait` = W("trait")
   val `interface` = W("interface")
   val `enum` = W("enum")

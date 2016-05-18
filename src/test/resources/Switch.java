@@ -1,17 +1,20 @@
 class A {
     void main(List<String> args) {
         switch (state) {
-            case TT: {
+            case "":
+                System.out.println();
+                System.out.println();
+                System.out.println();
                 System.out.println();
                 break;
-            }
-            case 1: {
-                System.out.println();
+            case 1:
+                String a = new String("");
                 break;
-            }
-            default: {
-                System.out.println();
-            }
+            case 3.2:
+                String a = new String("");
+            default:
+                String a = new String("");
+                break;
         }
     }
 }

@@ -28,7 +28,7 @@ object Identifiers{
   }
 
   val alphaKeywords = Seq(
-    "abstract", "case", "catch", "class", "def", "do", "else",
+    "abstract", "case", "break", "catch", "class", "def", "do", "else",
     "extends", "false", "finally", "final", "finally", "forSome",
     "for", "if", "implicit", "import", "lazy", "match", "new",
     "null", "object", "override", "package", "private", "protected",

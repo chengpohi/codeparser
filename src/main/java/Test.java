@@ -12,14 +12,14 @@ public class Test<T> {
         {
         }
         int i = 0;
-        for (; i < 30; i++) {
+        for (; i < 30; i++)
 
-        }
         switch("") {
-            case "": {
+            case "":
+                System.out.println();
+                System.out.println();
                 System.out.println();
                 break;
-            }
             default:
                 System.out.println();
         }
