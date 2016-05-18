@@ -50,7 +50,7 @@ trait Exprs extends Core with Types {
 
       val While = P(`while` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ Expr)
       val Switch = {
-        P(`switch` ~/ "(" ~ "state" ~ ")" ~ "{" ~/ Expr ~ "}")
+        P(`switch` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ "{" ~/ Expr ~ "}")
       }
       val Try = {
         val Catch = P(`catch` ~/ Expr)
