@@ -15,6 +15,14 @@ public class Test<T> {
         for (; i < 30; i++) {
 
         }
+        switch("") {
+            case "": {
+                System.out.println();
+                break;
+            }
+            default:
+                System.out.println();
+        }
     }
 
     public <T, A> void M(String... f) {
