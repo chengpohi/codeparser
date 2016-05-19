@@ -42,18 +42,18 @@ trait Types extends Core {
   val TypeId = P(StableId)
   val SimpleType: P0 = {
     val BasicType = P(TypeId)
-    P(BasicType ~ TypeArgs.? ~ "[]".?)
+    P(BasicType ~ TypeArgs.?)
   }
 
   val TypeArgs = P("<" ~ Type.rep(sep = ",".~/) ~ ">")
 
 
-  val Exception = P(`throws` ~ Type.rep(1, sep=","))
+  val Exception = P(`throws` ~ Type.rep(1, sep = ","))
   val FunSig: P0 = {
     val FunArg = P(Annot.rep ~ `final`.? ~ Type ~ WL ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
     val FunTypeArgs = P("[" ~/ (Annot.rep ~ TypeArg).rep(1, ",".~/) ~ "]")
-    P(OneNLMax ~ "(" ~/ Args.? ~ ")" ~/ Exception.? )
+    P(OneNLMax ~ "(" ~/ Args.? ~ ")" ~/ Exception.?)
   }
 
   val TypeBounds: P0 = P((Pass ~ `extends` ~/ Type).?)

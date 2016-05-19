@@ -60,10 +60,10 @@ trait Exprs extends Core with Types {
       val DoWhile = P(`do` ~/ Expr ~ Semi.? ~ `while` ~ "(" ~ ExprCtx.Expr ~ ")")
 
       val For = {
-        val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
-        val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
-        val Body = P("(" ~/ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ")" ~ OneNLMax ~ Expr)
-        P(`for` ~/ Body)
+        val Body1 = P(ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.?)
+        val Body2 = P(ExprCtx.Expr ~ `:` ~ ExprCtx.Expr)
+        val Loop = P(("(" ~ (Body1 | Body2) ~ ")") ~ OneNLMax ~ Expr)
+        P(`for` ~/ Loop )
       }
       val Throw = P(`throw` ~/ Expr)
       val Return = P(`return` ~/ Expr.?)
@@ -82,7 +82,8 @@ trait Exprs extends Core with Types {
     val AscriptionType = if (curlyBlock) P(PostfixType) else P(Type)
     val Ascription = P(`:` ~/ (`_*` | AscriptionType | Annot.rep(1)))
     val ExprPrefix = P(WL ~ CharIn("-+!~") ~~ !Basic.OpChar ~ WS)
-    val ExprSuffix = P((WL ~ "." ~/ Id | WL ~ TypeArgs | NoSemis ~ ArgList).repX ~~ (NoSemis ~ `_`).?)
+    val ArraySuffix = P("[" ~/ ExprCtx.Expr ~ "]" ~ ("." ~  Expr).?)
+    val ExprSuffix = P((WL ~ "." ~/ Id | WL ~ ArraySuffix | NoSemis ~ ArgList).repX ~~ (NoSemis ~ `_`).?)
     val PrefixExpr = P(ExprPrefix.? ~ SimpleExpr)
 
     // Intermediate `WL` needs to always be non-cutting, because you need to
