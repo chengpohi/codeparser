@@ -12,6 +12,9 @@ trait Core extends Literals{
   // in the file, so it makes sense to keep them short.
 
   import Key._
+
+  def ArrayExpr: P0
+
   // Keywords that match themselves and nothing else
   val `=>` = O("=>") | O("⇒")
   val `<-` = O("<-") | O("←")
@@ -95,6 +98,7 @@ trait Core extends Literals{
     val ThisSuper = P( `this` | `super` )
     val ThisPath: P0 = P( ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep )
     val IdPath: P0 = P( Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).? )
-    P( (ThisPath | IdPath) ~ "[]".?)
+    val arrayInitBlock: P0 = P("{" ~ ArrayExpr.rep(sep = ",") ~ "}")
+    P( (ThisPath | IdPath) ~ ("[]" ~ arrayInitBlock.?).?)
   }
 }

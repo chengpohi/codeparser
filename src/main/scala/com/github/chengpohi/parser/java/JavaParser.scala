@@ -12,6 +12,8 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
+  val ArrayExpr: P0 = ExprCtx.Expr
+
   val TmplBlock: P0 = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
@@ -21,7 +23,7 @@ class JavaParser extends Core with Types with Exprs {
   }
 
   //class/interface/abstract class Body
-  val TmplBody: P0 = P("{" ~/ TmplBlock ~ `}`)
+  val TmplBody: P0 = P("{" ~/ TmplBlock  ~ `}`)
 
   val VarDefine = P((`=` ~/ StatCtx.Expr).?)
 
