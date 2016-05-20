@@ -1,6 +1,6 @@
-
 /*
- * Copyright (c) 2008, 2009, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Copyright (c) 1997, 2004, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -22,22 +22,68 @@
  * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
  * or visit www.oracle.com if you need additional information or have any
  * questions.
+ *
  */
-package build.tools.logutil;
+
+package com.sun.corba.se.impl.activation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.util.Properties;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Queue;
+import org.omg.CORBA.INITIALIZE;
+import org.omg.CORBA.INTERNAL;
+import org.omg.CORBA.CompletionStatus;
+import org.omg.CosNaming.NamingContext;
+import org.omg.PortableServer.POA;
 
-public class MC {
-    private static final List<String> SUN_EXCEPTION_GROUPS = Arrays.asList(new String[]
-            { 1,1});
+import com.sun.corba.se.pept.transport.Acceptor;
 
+import com.sun.corba.se.spi.activation.Repository;
+import com.sun.corba.se.spi.activation.RepositoryPackage.ServerDef;
+import com.sun.corba.se.spi.activation.Locator;
+import com.sun.corba.se.spi.activation.LocatorHelper;
+import com.sun.corba.se.spi.activation.Activator;
+import com.sun.corba.se.spi.activation.ActivatorHelper;
+import com.sun.corba.se.spi.activation.ServerAlreadyRegistered;
+import com.sun.corba.se.spi.legacy.connection.LegacyServerSocketEndPointInfo;
+import com.sun.corba.se.spi.transport.SocketInfo;
+import com.sun.corba.se.spi.orb.ORB;
+
+import com.sun.corba.se.impl.legacy.connection.SocketFactoryAcceptorImpl;
+import com.sun.corba.se.impl.naming.cosnaming.TransientNameService;
+import com.sun.corba.se.impl.naming.pcosnaming.NameService;
+import com.sun.corba.se.impl.orbutil.ORBConstants;
+import com.sun.corba.se.impl.orbutil.CorbaResourceUtil;
+import com.sun.corba.se.impl.transport.SocketOrChannelAcceptorImpl;
+
+/**
+ *
+ * @author      Rohit Garg
+ * @since       JDK1.2
+ */
+public class ORBD
+{
+
+    protected ORB createORB(String[] args)
+    {
+        Properties props = System.getProperties();
+
+        // For debugging.
+        //props.put( ORBConstants.DEBUG_PROPERTY, "naming" ) ;
+        //props.put( ORBConstants.DEBUG_PROPERTY, "transport,giop,naming" ) ;
+
+        props.put( ORBConstants.SERVER_ID_PROPERTY, "1000" ) ;
+        props.put( ORBConstants.PERSISTENT_SERVER_PORT_PROPERTY,
+                props.getProperty( ORBConstants.ORBD_PORT_PROPERTY,
+                        Integer.toString(
+                                ORBConstants.DEFAULT_ACTIVATION_PORT ) ) ) ;
+
+        // See Bug 4396928 for more information about why we are initializing
+        // the ORBClass to PIORB (now ORBImpl, but should check the bugid).
+        props.put("org.omg.CORBA.ORBClass",
+                "com.sun.corba.se.impl.orb.ORBImpl");
+
+        return (ORB) ORB.init(args, props);
+    }
 }
+

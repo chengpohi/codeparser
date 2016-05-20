@@ -63,7 +63,7 @@ trait Exprs extends Core with Types {
         val Body1 = P(ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.? ~ ";" ~ ExprCtx.Expr.?)
         val Body2 = P(ExprCtx.Expr ~ `:` ~ ExprCtx.Expr)
         val Loop = P(("(" ~ (Body1 | Body2) ~ ")") ~ OneNLMax ~ Expr)
-        P(`for` ~/ Loop )
+        P(`for` ~/ Loop)
       }
       val Throw = P(`throw` ~/ Expr)
       val Return = P(`return` ~/ Expr.?)
@@ -73,16 +73,18 @@ trait Exprs extends Core with Types {
       val ImplicitLambda = P(`implicit` ~ (Id | `_`) ~ (`:` ~ InfixType).? ~ `=>` ~ LambdaRhs.?)
       val ParenedLambda = P(Parened ~~ (WL ~ `=>` ~ LambdaRhs.? | ExprSuffix ~~ PostfixSuffix))
       val PostfixLambda = P(PostfixExpr ~ (`=>` ~ LambdaRhs.?).?)
-      val SmallerExprOrLambda = P(ParenedLambda | PostfixLambda)
+      val MethodCall = P(Type ~ "(" ~ ExprCtx.Expr.rep(sep = ",") ~ ")")
+      val SmallerExprOrLambda = P(ParenedLambda | PostfixLambda | MethodCall)
+      val CastClause = P("(" ~ Type ~ ")" ~ ExprCtx.Expr)
       P(
-        If | CaseClause | DefaultClause | Switch | Break | While | Try | DoWhile | For | Throw | Return |
+        If | CaseClause | DefaultClause | Switch | Break | While | Try | DoWhile | For | Throw | Return | CastClause |
           ImplicitLambda | SmallerExprOrLambda
       )
     }
     val AscriptionType = if (curlyBlock) P(PostfixType) else P(Type)
     val Ascription = P(`:` ~/ (`_*` | AscriptionType | Annot.rep(1)))
     val ExprPrefix = P(WL ~ CharIn("-+!~") ~~ !Basic.OpChar ~ WS)
-    val ArraySuffix = P("[" ~/ ExprCtx.Expr ~ "]" ~ ("." ~  Expr).?)
+    val ArraySuffix = P("[" ~/ ExprCtx.Expr ~ "]" ~ ("." ~ Expr).?)
     val ExprSuffix = P((WL ~ "." ~/ Id | WL ~ ArraySuffix | NoSemis ~ ArgList).repX ~~ (NoSemis ~ `_`).?)
     val PrefixExpr = P(ExprPrefix.? ~ SimpleExpr)
 
