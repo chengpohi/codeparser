@@ -31,7 +31,7 @@ object Basic {
   //is letter
   val Letter = P(CharPred(c => c.isLetter | c.isDigit))
   val LetterDigitDollarUnderscore = P(CharPred(c => c.isLetter | c.isDigit))
-  val Lower = P(CharPred(c => c.isLower))
+  val Lower = P(CharPred(c => c.isLower || c == '_'))
   //is Upper
   val Upper = P(CharPred(_.isUpper))
 }
