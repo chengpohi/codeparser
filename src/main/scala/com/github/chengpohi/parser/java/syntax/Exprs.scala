@@ -53,9 +53,9 @@ trait Exprs extends Core with Types {
         P(`switch` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ "{" ~/ Expr ~ "}")
       }
       val Try = {
-        val Catch = P(`catch` ~/ Expr)
+        val Catch = P(`catch` ~/ "(" ~ Type ~ WL ~ Id ~ ")" ~ "{" ~/ BlockChunk ~ "}")
         val Finally = P(`finally` ~/ Expr)
-        P(`try` ~/ Expr ~ Catch.? ~ Finally.?)
+        P(`try` ~/ Expr ~ Catch.rep ~ Finally.?)
       }
       val DoWhile = P(`do` ~/ Expr ~ Semi.? ~ `while` ~ "(" ~ ExprCtx.Expr ~ ")")
 

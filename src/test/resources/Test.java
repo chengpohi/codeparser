@@ -1,3 +1,4 @@
+
 /*
  *
  * Copyright (c) 1997, 2004, Oracle and/or its affiliates. All rights reserved.
@@ -64,26 +65,73 @@ import com.sun.corba.se.impl.transport.SocketOrChannelAcceptorImpl;
 public class ORBD
 {
 
-    protected ORB createORB(String[] args)
+    private void run(String[] args)
     {
-        Properties props = System.getProperties();
+        try {
+            // parse the args and try setting the values for these
+            // properties
+            processArgs(args);
 
-        // For debugging.
-        //props.put( ORBConstants.DEBUG_PROPERTY, "naming" ) ;
-        //props.put( ORBConstants.DEBUG_PROPERTY, "transport,giop,naming" ) ;
+            ORB orb = createORB(args);
 
-        props.put( ORBConstants.SERVER_ID_PROPERTY, "1000" ) ;
-        props.put( ORBConstants.PERSISTENT_SERVER_PORT_PROPERTY,
-                props.getProperty( ORBConstants.ORBD_PORT_PROPERTY,
-                        Integer.toString(
-                                ORBConstants.DEFAULT_ACTIVATION_PORT ) ) ) ;
+            if (orb.orbdDebugFlag)
+                System.out.println( "ORBD begins initialization." ) ;
 
-        // See Bug 4396928 for more information about why we are initializing
-        // the ORBClass to PIORB (now ORBImpl, but should check the bugid).
-        props.put("org.omg.CORBA.ORBClass",
-                "com.sun.corba.se.impl.orb.ORBImpl");
+            boolean firstRun = createSystemDirs( ORBConstants.DEFAULT_DB_DIR );
 
-        return (ORB) ORB.init(args, props);
+            startActivationObjects(orb);
+
+            if (firstRun) // orbd is being run the first time
+                installOrbServers(getRepository(), getActivator());
+
+            if (orb.orbdDebugFlag) {
+                System.out.println( "ORBD is ready." ) ;
+                System.out.println("ORBD serverid: " +
+                        System.getProperty(ORBConstants.SERVER_ID_PROPERTY));
+                System.out.println("activation dbdir: " +
+                        System.getProperty(ORBConstants.DB_DIR_PROPERTY));
+                System.out.println("activation port: " +
+                        System.getProperty(ORBConstants.ORBD_PORT_PROPERTY));
+
+                String pollingTime = System.getProperty(
+                        ORBConstants.SERVER_POLLING_TIME);
+                if( pollingTime == null ) {
+                    pollingTime = Integer.toString(
+                            ORBConstants.DEFAULT_SERVER_POLLING_TIME );
+                }
+                System.out.println("activation Server Polling Time: " +
+                        pollingTime + " milli-seconds ");
+
+                String startupDelay = System.getProperty(
+                        ORBConstants.SERVER_STARTUP_DELAY);
+                if( startupDelay == null ) {
+                    startupDelay = Integer.toString(
+                            ORBConstants.DEFAULT_SERVER_STARTUP_DELAY );
+                }
+                System.out.println("activation Server Startup Delay: " +
+                        startupDelay + " milli-seconds " );
+            }
+
+            // The following two lines start the Persistent NameService
+            NameServiceStartThread theThread =
+                    new NameServiceStartThread( orb, dbDir );
+            theThread.start( );
+
+            orb.run();
+        } catch( org.omg.CORBA.COMM_FAILURE cex ) {
+            System.out.println( CorbaResourceUtil.getText("orbd.commfailure"));
+            System.out.println( cex );
+            cex.printStackTrace();
+        } catch( org.omg.CORBA.INTERNAL iex ) {
+            System.out.println( CorbaResourceUtil.getText(
+                    "orbd.internalexception"));
+            System.out.println( iex );
+            iex.printStackTrace();
+        } catch (Exception ex) {
+            System.out.println(CorbaResourceUtil.getText(
+                    "orbd.usage", "orbd"));
+            System.out.println( ex );
+            ex.printStackTrace();
+        }
     }
 }
-
