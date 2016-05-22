@@ -69,6 +69,9 @@ trait Exprs extends Core with Types {
       val Return = P(`return` ~/ Expr.?)
       val LambdaRhs = if (curlyBlock) P(BlockChunk) else P(Expr)
 
+      val TernaryExpr = {
+        P("?" ~/ ExprCtx.Expr ~ `:` ~/ ExprCtx.Expr)
+      }
 
       val ImplicitLambda = P(`implicit` ~ (Id | `_`) ~ (`:` ~ InfixType).? ~ `=>` ~ LambdaRhs.?)
       val ParenedLambda = P(Parened ~~ (WL ~ `=>` ~ LambdaRhs.? | ExprSuffix ~~ PostfixSuffix))
@@ -78,7 +81,7 @@ trait Exprs extends Core with Types {
       val CastClause = P("(" ~ Type ~ ")" ~ ExprCtx.Expr)
       P(
         If | CaseClause | DefaultClause | Switch | Break | While | Try | DoWhile | For | Throw | Return | CastClause |
-          ImplicitLambda | SmallerExprOrLambda
+          ImplicitLambda | SmallerExprOrLambda ~ TernaryExpr.?
       )
     }
     val AscriptionType = if (curlyBlock) P(PostfixType) else P(Type)

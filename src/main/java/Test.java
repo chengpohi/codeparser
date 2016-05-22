@@ -13,6 +13,7 @@ public class Test<T> {
 
     public static void main(String[] args) {
         int i = 0;
+        String a = 1 == 1 ? "a new server Id" : "fff";
         for (; i < 30; i++)
 
             switch ("") {

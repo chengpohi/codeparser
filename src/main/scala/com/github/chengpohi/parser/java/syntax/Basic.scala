@@ -25,7 +25,7 @@ object Basic {
   val OpChar = P(CharPred(isOpChar))
 
   def isOpChar(c: Char) = {
-    fastparse.CharPredicates.isOtherSymbol(c) || fastparse.CharPredicates.isMathSymbol(c) || "!%&*+-/:<=>?@\\^|~".contains(c)
+    fastparse.CharPredicates.isOtherSymbol(c) || fastparse.CharPredicates.isMathSymbol(c) || "!%&*+-/:<=>@\\^|~".contains(c)
   }
 
   //is letter
