@@ -17,10 +17,10 @@ object Identifiers{
   def VarId0(dollar: Boolean) = P( !Keywords ~ Lower ~ IdRest(dollar) )
   val PlainId = P( !Keywords ~ Upper ~ IdRest(true) | VarId | Operator ~ (!OpChar | &("/*" | "//")) )
   val PlainIdNoDollar = P( !Keywords ~ Upper ~ IdRest(false) | VarId0(false) | Operator )
-  val Id: P0 = P( PlainId )
+  val Id: P0 = P( PlainId)
 
   def IdRest(allowDollar: Boolean) = {
-    val NonLetterDigitId = if(!allowDollar) "" else "$"
+    val NonLetterDigitId = if(!allowDollar) "[]" else "[]$"
     val IdUnderscoreChunk = P( CharsWhile(_ ==  '_', min = 0) ~ CharsWhile(
       c => NonLetterDigitId.contains(c) || c.isLetter || c.isDigit
     ) )

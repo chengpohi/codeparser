@@ -22,7 +22,8 @@ class A {
         }
         switch (state) {
             case "":
-                String[] a = new String[5];
+                String[] a = new String();
+                String a = new String("");
                 System.out.println();
                 System.out.println();
                 System.out.println();

@@ -19,6 +19,9 @@ trait Exprs extends Core with Types {
     P(`import` ~/ ImportExpr.rep(1, sep = ",".~/))
   }
 
+  val arrayInitBlock: P0 = P("{" ~ ExprCtx.Expr.rep(sep = ",") ~ "}")
+  val ArrayExpr: P0 = P(("[" ~/ ExprCtx.Expr.? ~ "]").rep(1) ~ arrayInitBlock.?)
+
   object StatCtx extends WsCtx(curlyBlock = true)
 
   object ExprCtx extends WsCtx(curlyBlock = false)
@@ -102,6 +105,7 @@ trait Exprs extends Core with Types {
 
     val Parened = P("(" ~/ TypeExpr.rep(0, ",".~/) ~ ")")
     val SimpleExpr: P0 = {
+
       val New = P(`new` ~/ AnonTmpl)
 
       P(New | BlockExpr | ExprLiteral | StableId | `_` | Parened)

@@ -12,6 +12,8 @@ trait Types extends Core {
 
   def FunDef: P0
 
+  def ArrayExpr: P0
+
   //modifiers for class
   val LocalMod: P0 = P(`abstract` | `final` | `static`)
   val AccessMod: P0 = {
@@ -40,8 +42,9 @@ trait Types extends Core {
   val AnnotType = P(SimpleType ~~ NLAnnot.repX)
 
   val TypeId = P(StableId)
+
   val SimpleType: P0 = {
-    val BasicType = P(TypeId)
+    val BasicType = P(TypeId ~ ArrayExpr.?)
     P(BasicType ~ TypeArgs.?)
   }
 

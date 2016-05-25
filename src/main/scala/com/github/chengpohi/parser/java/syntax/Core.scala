@@ -2,9 +2,12 @@ package com.github.chengpohi.parser.java.syntax
 
 import scala.language.implicitConversions
 
-trait Core extends Literals{
+trait Core extends Literals {
+
   import fastparse.noApi._
+
   val WhitespaceApi = new fastparse.WhitespaceApi.Wrapper(WL0)
+
   import WhitespaceApi._
 
 
@@ -13,7 +16,6 @@ trait Core extends Literals{
 
   import Key._
 
-  def ArrayExpr: P0
 
   // Keywords that match themselves and nothing else
   val `=>` = O("=>") | O("⇒")
@@ -64,7 +66,7 @@ trait Core extends Literals{
   val `match` = W("match")
   val `>:` = O(">:")
   val `<:` = O("<:")
-  val `final` =  W("final")
+  val `final` = W("final")
   val `sealed` = W("sealed")
   val `private` = W("private")
   val `protected` = W("protected")
@@ -75,30 +77,29 @@ trait Core extends Literals{
   // kinda-sorta keywords that are common patterns even if not
   // really-truly keywords
   val `*` = O("*")
-  val `_*` = P( `_` ~ `*` )
-  val `}` = P( Semis.? ~ "}" )
-  val `{` = P( "{" ~ Semis.? )
+  val `_*` = P(`_` ~ `*`)
+  val `}` = P(Semis.? ~ "}")
+  val `{` = P("{" ~ Semis.?)
 
   //id name
-  val Id = P( WL ~ Identifiers.Id )
-  val VarId = P( WL ~ Identifiers.VarId )
-  val ExprLiteral = P( WL ~ Literals.Expr.Literal )
-  val PatLiteral = P( WL ~ Literals.Pat.Literal )
+  val Id = P(WL ~ Identifiers.Id)
+  val VarId = P(WL ~ Identifiers.VarId)
+  val ExprLiteral = P(WL ~ Literals.Expr.Literal)
+  val PatLiteral = P(WL ~ Literals.Pat.Literal)
 
   //import namespace
-  val QualId = P( WL ~ Id.rep(1, sep = ".") )
-  val Ids = P( Id.rep(1, sep = ",") )
+  val QualId = P(WL ~ Id.rep(1, sep = "."))
+  val Ids = P(Id.rep(1, sep = ","))
 
   /**
-   * Sketchy way to whitelist a few suffixes that come after a . select;
-   * apart from these and IDs, everything else is illegal
-   */
-  val PostDotCheck: P0 = P( WL ~ !(`super` | `this` | `_` | `type`) )
+    * Sketchy way to whitelist a few suffixes that come after a . select;
+    * apart from these and IDs, everything else is illegal
+    */
+  val PostDotCheck: P0 = P(WL ~ !(`super` | `this` | `_` | `type`))
   val StableId: P0 = {
-    val ThisSuper = P( `this` | `super` )
-    val ThisPath: P0 = P( ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep )
-    val IdPath: P0 = P( Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).? )
-    val arrayInitBlock: P0 = P("{" ~ ArrayExpr.rep(sep = ",") ~ "}")
-    P( (ThisPath | IdPath) ~ ("[]".rep(1) ~ arrayInitBlock.?).?)
+    val ThisSuper = P(`this` | `super`)
+    val ThisPath: P0 = P(ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep)
+    val IdPath: P0 = P(Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).?)
+    P(ThisPath | IdPath)
   }
 }
