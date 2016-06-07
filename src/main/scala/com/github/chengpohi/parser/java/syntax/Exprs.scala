@@ -104,9 +104,11 @@ trait Exprs extends Core with Types {
     val PostfixExpr: P0 = P(PrefixExpr ~~ ExprSuffix ~~ PostfixSuffix)
 
     val Parened = P("(" ~/ TypeExpr.rep(0, ",".~/) ~ ")")
+    val InitialBlock: P0 = P("{" ~ StatCtx.Expr.repX(sep = ",") ~ "}")
+
     val SimpleExpr: P0 = {
 
-      val New = P(`new` ~/ AnonTmpl)
+      val New = P(`new` ~/ AnnotType ~ InitialBlock.?)
 
       P(New | BlockExpr | ExprLiteral | StableId | `_` | Parened)
     }

@@ -20,6 +20,7 @@ class JavaParser extends Core with Types with Exprs {
     P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?)
   }
 
+
   //class/interface/abstract class Body
   val TmplBody: P0 = P("{" ~/ TmplBlock ~ `}`)
 
