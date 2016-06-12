@@ -1,5 +1,6 @@
 package com.github.chengpohi.parser.java
 
+import com.github.chengpohi.parser.java.JavaAST.{Clazz, ClazzName}
 import com.github.chengpohi.parser.java.syntax.{Core, Exprs, Types}
 import fastparse.noApi._
 
@@ -12,7 +13,7 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
-  val TmplBlock: P0 = {
+  val TmplBlock: Parser[Any] = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
     val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
@@ -22,7 +23,7 @@ class JavaParser extends Core with Types with Exprs {
 
 
   //class/interface/abstract class Body
-  val TmplBody: P0 = P("{" ~/ TmplBlock ~ `}`)
+  val TmplBody: Parser[Any] = P("{" ~/ TmplBlock ~ `}`)
 
   val VarDefine = P((`=` ~/ StatCtx.Expr).?)
 
@@ -31,10 +32,10 @@ class JavaParser extends Core with Types with Exprs {
     P(FunSig ~~ Body.?)
   }
 
-  val BlockDef: P0 = P(InterfaceDef | EnumDef | ClsDef | Dcl)
+  val BlockDef: Parser[Any] = P(InterfaceDef | EnumDef | ClsDef | Dcl)
 
-  val ClsDef = {
-    P(`class` ~/ Id ~ GenericArgList.? ~ DefTmpl.?)
+  val ClsDef: Parser[Clazz] = {
+    P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
   }
 
   val Constrs = P((WL ~ Constr).rep(1, `implements`.~/))
@@ -49,7 +50,7 @@ class JavaParser extends Core with Types with Exprs {
 
   val PkgBlock = P(QualId ~/ `{` ~ TopStatSeq.? ~ `}`)
   val Pkg = P(`package` ~/ PkgBlock)
-  val TopStatSeq: P0 = {
+  val TopStatSeq: Parser[Any] = {
     //annotation and class statement
     val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef | EnumDef))
     val TopStat = P(Pkg | Import | Tmpl)
@@ -58,7 +59,7 @@ class JavaParser extends Core with Types with Exprs {
   //~~ parse with space newline tab
   //parse package with comment
   val TopPkgSeq = P(`package` ~ QualId)
-  val CompilationUnit: P0 = {
+  val CompilationUnit: Parser[Any] = {
     val Body = P(TopPkgSeq ~~ (Semis ~ TopStatSeq).? | TopStatSeq)
     P(Semis.? ~ Body.? ~ WL ~ End)
   }

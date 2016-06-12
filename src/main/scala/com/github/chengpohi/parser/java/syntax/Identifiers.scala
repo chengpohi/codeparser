@@ -17,7 +17,7 @@ object Identifiers{
   def VarId0(dollar: Boolean) = P( !Keywords ~ Lower ~ IdRest(dollar) )
   val PlainId = P( !Keywords ~ Upper ~ IdRest(true) | VarId | Operator ~ (!OpChar | &("/*" | "//")) )
   val PlainIdNoDollar = P( !Keywords ~ Upper ~ IdRest(false) | VarId0(false) | Operator )
-  val Id: P0 = P( PlainId)
+  val Id: Parser[Any] = P( PlainId)
 
   def IdRest(allowDollar: Boolean) = {
     val NonLetterDigitId = if(!allowDollar) "[]" else "[]$"

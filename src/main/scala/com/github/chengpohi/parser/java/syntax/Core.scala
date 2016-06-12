@@ -95,11 +95,11 @@ trait Core extends Literals {
     * Sketchy way to whitelist a few suffixes that come after a . select;
     * apart from these and IDs, everything else is illegal
     */
-  val PostDotCheck: P0 = P(WL ~ !(`super` | `this` | `_` | `type`))
-  val StableId: P0 = {
+  val PostDotCheck: Parser[Any] = P(WL ~ !(`super` | `this` | `_` | `type`))
+  val StableId: Parser[Any] = {
     val ThisSuper = P(`this` | `super`)
-    val ThisPath: P0 = P(ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep)
-    val IdPath: P0 = P(Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).?)
+    val ThisPath: Parser[Any] = P(ThisSuper ~ ("." ~ PostDotCheck ~/ Id).rep)
+    val IdPath: Parser[Any] = P(Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).?)
     P(ThisPath | IdPath)
   }
 }

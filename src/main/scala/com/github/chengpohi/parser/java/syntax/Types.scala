@@ -6,27 +6,27 @@ trait Types extends Core {
 
   import WhitespaceApi._
 
-  def TypeExpr: P0
+  def TypeExpr: Parser[Any]
 
-  def VarDefine: P0
+  def VarDefine: Parser[Any]
 
-  def FunDef: P0
+  def FunDef: Parser[Any]
 
-  def ArrayExpr: P0
+  def ArrayExpr: Parser[Any]
 
   //modifiers for class
-  val LocalMod: P0 = P(`abstract` | `final` | `static`)
-  val AccessMod: P0 = {
+  val LocalMod: Parser[Any] = P(`abstract` | `final` | `static`)
+  val AccessMod: Parser[Any] = {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: P0 = P(Pass ~ Type.rep ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?)
+  val Dcl: Parser[Any] = P(Pass ~ Type.rep ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?)
 
-  val Mod: P0 = P(LocalMod | AccessMod | `override`)
+  val Mod: Parser[Any] = P(LocalMod | AccessMod | `override`)
 
   val ExistentialClause = P(`forSome` ~/ `{` ~ Dcl.repX(1, Semis) ~ `}`)
   val PostfixType = P(InfixType)
-  val Type: P0 = P(PostfixType)
+  val Type: Parser[Any] = P(PostfixType)
 
 
   // Can't cut after `Id` because it may be a `*`, in which case
@@ -43,7 +43,7 @@ trait Types extends Core {
 
   val TypeId = P(StableId)
 
-  val SimpleType: P0 = {
+  val SimpleType: Parser[Any] = {
     val BasicType = P(TypeId ~ ArrayExpr.?)
     P(BasicType ~ TypeArgs.?)
   }
@@ -52,31 +52,31 @@ trait Types extends Core {
 
 
   val Exception = P(`throws` ~ Type.rep(1, sep = ","))
-  val FunSig: P0 = {
+  val FunSig: Parser[Any] = {
     val FunArg = P(Annot.rep ~ `final`.? ~ Type ~ WL ~ Id)
     val Args = P(FunArg.rep(1, ",".~/))
     val FunTypeArgs = P("[" ~/ (Annot.rep ~ TypeArg).rep(1, ",".~/) ~ "]")
     P(OneNLMax ~ "(" ~/ Args.? ~ ")" ~/ Exception.?)
   }
 
-  val TypeBounds: P0 = P((Pass ~ `extends` ~/ Type).?)
-  val TypeArg: P0 = {
+  val TypeBounds: Parser[Any] = P((Pass ~ `extends` ~/ Type).?)
+  val TypeArg: Parser[Any] = {
     val CtxBounds = P((`<%` ~/ Type).rep ~ (`:` ~/ Type).rep)
     P((Id | `_`) ~ TypeArgList.? ~ TypeBounds ~ CtxBounds)
   }
 
   //class annotation with name, values
-  val Annot: P0 = P(`@` ~/ SimpleType ~ ("(" ~/ Exprs.? ~ ")").rep)
+  val Annot: Parser[Any] = P(`@` ~/ SimpleType ~ ("(" ~/ Exprs.? ~ ")").rep)
 
-  val TypeArgList: P0 = {
-    val Variant: P0 = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
+  val TypeArgList: Parser[Any] = {
+    val Variant: Parser[Any] = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
     P("[" ~/ Variant.rep(1, ",".~/) ~ "]")
   }
 
-  val GenericArgList: P0 = {
-    val Variant: P0 = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
+  val GenericArgList: Parser[Any] = {
+    val Variant: Parser[Any] = P(Annot.rep ~ CharIn("+-").? ~ TypeArg)
     P("<" ~/ Variant.rep(1, ",".~/) ~ ">")
   }
-  val Exprs: P0 = P(TypeExpr.rep(1, ",".~/))
-  val TypeDef: P0 = P(Id ~ TypeArgList.? ~ (`=` ~/ Type | TypeBounds))
+  val Exprs: Parser[Any] = P(TypeExpr.rep(1, ",".~/))
+  val TypeDef: Parser[Any] = P(Id ~ TypeArgList.? ~ (`=` ~/ Type | TypeBounds))
 }

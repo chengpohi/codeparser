@@ -12,7 +12,7 @@ import fastparse.parsers.Intrinsics
 
 trait Literals {
   l =>
-  def Block: P0
+  def Block: Parser[Any]
 
   /**
     * Parses all whitespace(space, tab) and comment, excluding newlines. This is only
@@ -33,14 +33,14 @@ trait Literals {
   val Semis = P(Semi.rep(1) ~ WS)
   val Newline = P(WL ~ Basic.Newline)
 
-  val NotNewline: P0 = P(&(WS ~ !Basic.Newline))
+  val NotNewline: Parser[Any] = P(&(WS ~ !Basic.Newline))
   //comments or newline or not newline
-  val OneNLMax: P0 = {
+  val OneNLMax: Parser[Any] = {
     val ConsumeComments = P((Basic.WSChars.? ~ Literals.Comment ~ Basic.WSChars.? ~ Basic.Newline).rep)
     P(NoCut(WS ~ Basic.Newline.? ~ ConsumeComments ~ NotNewline))
   }
 
-  def Pattern: P0
+  def Pattern: Parser[Any]
 
   object Literals {
 
@@ -63,7 +63,7 @@ trait Literals {
     val MultilineComment: P0 = P("/*" ~/ CommentChunk.rep ~ "*/")
     val SameLineCharChunks = P(CharsWhile(!"\n\r".contains(_)) | !Basic.Newline ~ AnyChar)
     val LineComment = P("//" ~ SameLineCharChunks.rep ~ &(Basic.Newline | End))
-    val Comment: P0 = P(MultilineComment | LineComment)
+    val Comment = P(MultilineComment | LineComment)
 
     val Null = Key.W("null")
 
@@ -80,7 +80,7 @@ trait Literals {
       P((Escape | PrintableChar) ~ "'")
     }
 
-    class InterpCtx(interp: Option[P0]) {
+    class InterpCtx(interp: Option[Parser[Any]]) {
       val Literal = P(("-".? ~ (Float | Int)) | Bool | String | "'" ~/ (Char | Symbol) | Null)
       val Interp = interp match {
         case None => P(Fail)
