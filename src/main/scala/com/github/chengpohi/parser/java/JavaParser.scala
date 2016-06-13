@@ -52,6 +52,7 @@ class JavaParser extends Core with Types with Exprs {
   val Pkg = P(`package` ~/ PkgBlock)
   val TopStatSeq: Parser[Any] = {
     //annotation and class statement
+    //Annotation capture, class capture, mod
     val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef | EnumDef))
     val TopStat = P(Pkg | Import | Tmpl)
     P(TopStat.repX(1, Semis))

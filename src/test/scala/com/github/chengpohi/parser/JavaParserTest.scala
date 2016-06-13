@@ -1,9 +1,13 @@
 package com.github.chengpohi.parser
 
+import com.github.chengpohi.parser.java.JavaAST.ClazzName
 import com.github.chengpohi.parser.java.JavaParser
 import com.github.chengpohi.util.FileUtils._
 import fastparse.core.Parsed
+import fastparse.core.Parsed.Success
 import org.scalatest.FlatSpec
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
   * codeparser
@@ -56,6 +60,11 @@ class JavaParserTest extends FlatSpec {
     })
   }
 
+  "Java Parser" should "generate java ast tree" in {
+    val testClassSource: String = readTestFile("/ast.java")
+    checkAST(testClassSource)
+  }
+
   def check(input: String) = {
     val res = javaParser.CompilationUnit.parse(input)
     res match {
@@ -64,6 +73,17 @@ class JavaParserTest extends FlatSpec {
       case s: Parsed.Success[_] =>
         val inputLength = input.length
         assert(s.index == inputLength)
+    }
+  }
+
+  def checkAST(input: String) = {
+    val res = javaParser.CompilationUnit.parse(input)
+    res match {
+      case f: Parsed.Failure =>
+        throw new Exception(input + "\n" + f.extra.traced.trace)
+      case Success(tree, f) =>
+        println(tree)
+        assert(tree === Some(ArrayBuffer((ArrayBuffer(), ArrayBuffer(), ClazzName("Test")))))
     }
   }
 }
