@@ -6,14 +6,18 @@ package com.github.chengpohi.parser.java
   */
 object JavaAST {
 
-  sealed trait Clazz extends Any {
+  sealed trait ClazzTree extends Any {
     def value: Any
   }
 
-  case class ClazzName(value: java.lang.String) extends AnyVal with Clazz
+  case class Clazz(modifier: Option[Modifier] = None, clazzName: ClazzName)
 
-  case class Import(value: java.lang.String) extends AnyVal with Clazz
+  case class ClazzName(value: java.lang.String) extends AnyVal with ClazzTree
 
-  case class Method(value: java.lang.String) extends AnyVal with Clazz
+  case class Modifier(value: java.lang.String) extends AnyVal with ClazzTree
+
+  case class Import(value: java.lang.String) extends AnyVal with ClazzTree
+
+  case class Method(value: java.lang.String) extends AnyVal with ClazzTree
 
 }

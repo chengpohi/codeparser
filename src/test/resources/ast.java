@@ -1,3 +1,6 @@
-class Test {
+private class Test {
 
+}
+
+interface TestInterface {
 }

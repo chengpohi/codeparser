@@ -1,6 +1,6 @@
 package com.github.chengpohi.parser.java
 
-import com.github.chengpohi.parser.java.JavaAST.{Clazz, ClazzName}
+import com.github.chengpohi.parser.java.JavaAST._
 import com.github.chengpohi.parser.java.syntax.{Core, Exprs, Types}
 import fastparse.noApi._
 
@@ -34,7 +34,7 @@ class JavaParser extends Core with Types with Exprs {
 
   val BlockDef: Parser[Any] = P(InterfaceDef | EnumDef | ClsDef | Dcl)
 
-  val ClsDef: Parser[Clazz] = {
+  val ClsDef = {
     P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
   }
 
@@ -43,8 +43,8 @@ class JavaParser extends Core with Types with Exprs {
   val DefTmpl = P((`extends` | `implements`) ~ AnonTmpl | TmplBody)
   val AnonTmpl = P(NamedTmpl | TmplBody)
 
-  val InterfaceDef = P(`interface` ~/ Id ~ TypeArgList.? ~ DefTmpl.?)
-  val EnumDef = P(`enum` ~/ Id ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`)
+  val InterfaceDef = P(`interface` ~/ Id.! ~ TypeArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
+  val EnumDef = P(`enum` ~/ Id.! ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`).map(i => ClazzName(i._1))
 
   val Constr = P(AnnotType)
 
@@ -53,7 +53,7 @@ class JavaParser extends Core with Types with Exprs {
   val TopStatSeq: Parser[Any] = {
     //annotation and class statement
     //Annotation capture, class capture, mod
-    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef | EnumDef))
+    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.? ~ (InterfaceDef | ClsDef | EnumDef)).map(i => Clazz(i._2, i._3))
     val TopStat = P(Pkg | Import | Tmpl)
     P(TopStat.repX(1, Semis))
   }

@@ -1,5 +1,6 @@
 package com.github.chengpohi.parser.java.syntax
 
+import com.github.chengpohi.parser.java.JavaAST.Modifier
 import fastparse.noApi._
 
 trait Types extends Core {
@@ -22,7 +23,7 @@ trait Types extends Core {
   }
   val Dcl: Parser[Any] = P(Pass ~ Type.rep ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?)
 
-  val Mod: Parser[Any] = P(LocalMod | AccessMod | `override`)
+  val Mod = P(LocalMod | AccessMod | `override`).!.map(Modifier)
 
   val ExistentialClause = P(`forSome` ~/ `{` ~ Dcl.repX(1, Semis) ~ `}`)
   val PostfixType = P(InfixType)
