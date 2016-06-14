@@ -1,6 +1,3 @@
-private class Test {
-
-}
-
-interface TestInterface {
+public class Test {
+    private String a;
 }

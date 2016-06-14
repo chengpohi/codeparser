@@ -13,17 +13,17 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
-  val TmplBlock: Parser[Any] = {
+  val TmplBlock: Parser[Seq[ClazzTree]] = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
     val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
 
-    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?)
+    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => Seq(Field("TestField")))
   }
 
 
   //class/interface/abstract class Body
-  val TmplBody: Parser[Any] = P("{" ~/ TmplBlock ~ `}`)
+  val TmplBody: Parser[Seq[ClazzTree]] = P("{" ~/ TmplBlock ~ `}`)
 
   val VarDefine = P((`=` ~/ StatCtx.Expr).?)
 
@@ -32,15 +32,16 @@ class JavaParser extends Core with Types with Exprs {
     P(FunSig ~~ Body.?)
   }
 
-  val BlockDef: Parser[Any] = P(InterfaceDef | EnumDef | ClsDef | Dcl)
+  val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Dcl)
 
   val ClsDef = {
-    P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
+    P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzElements(ClazzName(i._1), i._3.getOrElse(Seq())))
   }
 
   val Constrs = P((WL ~ Constr).rep(1, `implements`.~/))
   val NamedTmpl = P(Constrs ~ TmplBody.?)
-  val DefTmpl = P((`extends` | `implements`) ~ AnonTmpl | TmplBody)
+  //TODO super class and super interface
+  val DefTmpl: Parser[Seq[ClazzTree]] = P((`extends` | `implements`).? ~ TmplBody)
   val AnonTmpl = P(NamedTmpl | TmplBody)
 
   val InterfaceDef = P(`interface` ~/ Id.! ~ TypeArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
@@ -53,7 +54,11 @@ class JavaParser extends Core with Types with Exprs {
   val TopStatSeq: Parser[Any] = {
     //annotation and class statement
     //Annotation capture, class capture, mod
-    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.? ~ (InterfaceDef | ClsDef | EnumDef)).map(i => Clazz(i._2, i._3))
+    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.? ~ (InterfaceDef | ClsDef | EnumDef))
+      .map(i => {
+        val clazzElements: (ClazzName, Seq[ClazzTree]) = i._3.asInstanceOf[ClazzElements].value
+        Clazz(i._2.getOrElse(AccessModifier("public")), clazzElements._1, clazzElements._2)
+      })
     val TopStat = P(Pkg | Import | Tmpl)
     P(TopStat.repX(1, Semis))
   }

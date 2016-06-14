@@ -1,6 +1,6 @@
 package com.github.chengpohi.parser.java.syntax
 
-import com.github.chengpohi.parser.java.JavaAST.Modifier
+import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, ClazzTree, Field}
 import fastparse.noApi._
 
 trait Types extends Core {
@@ -21,9 +21,9 @@ trait Types extends Core {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: Parser[Any] = P(Pass ~ Type.rep ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?)
+  val Dcl: Parser[ClazzTree] = P(Pass ~ Type.rep.! ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?).map(i => Field(i._1))
 
-  val Mod = P(LocalMod | AccessMod | `override`).!.map(Modifier)
+  val Mod = P(LocalMod | AccessMod | `override`).!.map(AccessModifier)
 
   val ExistentialClause = P(`forSome` ~/ `{` ~ Dcl.repX(1, Semis) ~ `}`)
   val PostfixType = P(InfixType)

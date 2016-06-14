@@ -10,14 +10,17 @@ object JavaAST {
     def value: Any
   }
 
-  case class Clazz(modifier: Option[Modifier] = None, clazzName: ClazzName)
+  case class Clazz(accessModifier: AccessModifier, clazzName: ClazzName, elements: Seq[ClazzTree])
 
-  case class ClazzName(value: java.lang.String) extends AnyVal with ClazzTree
+  case class ClazzName(value: String) extends AnyVal with ClazzTree
 
-  case class Modifier(value: java.lang.String) extends AnyVal with ClazzTree
+  case class AccessModifier(value: String) extends AnyVal with ClazzTree
 
-  case class Import(value: java.lang.String) extends AnyVal with ClazzTree
+  case class ClazzElements(value: (ClazzName, Seq[ClazzTree])) extends AnyVal with ClazzTree
+  case class Field(value: String*) extends AnyVal with ClazzTree
 
-  case class Method(value: java.lang.String) extends AnyVal with ClazzTree
+  case class Import(value: String) extends AnyVal with ClazzTree
+
+  case class Method(value: String) extends AnyVal with ClazzTree
 
 }
