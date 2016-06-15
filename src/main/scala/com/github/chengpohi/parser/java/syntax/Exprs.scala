@@ -1,5 +1,6 @@
 package com.github.chengpohi.parser.java.syntax
 
+import com.github.chengpohi.parser.java.JavaAST.{ClazzElements, ClazzTree, Element}
 import fastparse.noApi._
 
 trait Exprs extends Core with Types {
@@ -41,7 +42,7 @@ trait Exprs extends Core with Types {
       P(TypeOrBindPattern ~ Generator ~~ Enumerator.repX)
     }
 
-    val Expr: Parser[Any] = {
+    val Expr: Parser[ClazzTree] = {
       val If = {
         val Else = P(Semi.? ~ `else` ~/ Expr)
         P(`if` ~/ "(" ~ ExprCtx.Expr ~ ")" ~ Expr ~ Else.?)
@@ -85,7 +86,7 @@ trait Exprs extends Core with Types {
       P(
         If | CaseClause | DefaultClause | Switch | Break | While | Try | DoWhile | For | Throw | Return | CastClause |
           ImplicitLambda | SmallerExprOrLambda ~ TernaryExpr.?
-      )
+      ).map(i => Element("element"))
     }
     val AscriptionType = if (curlyBlock) P(PostfixType) else P(Type)
     val Ascription = P(`:` ~/ (`_*` | AscriptionType | Annot.rep(1)))

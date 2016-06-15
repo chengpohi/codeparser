@@ -15,21 +15,24 @@ class JavaParser extends Core with Types with Exprs {
 
   val TmplBlock: Parser[Seq[ClazzTree]] = {
     //class state or annotation
-    val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep)
-    val TmplStat = P(Prelude ~ BlockDef | StatCtx.Expr)
+    val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep ~ BlockDef).map(i => i._3)
+    //val TmplStat = P(Prelude ~ BlockDef).map(i => i._3)
+    val TmplStat = P(Prelude | StatCtx.Expr).map(i => i)
 
-    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => Seq(Field("TestField")))
+
+    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => i._2)
+    //P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => Seq(Field(("TestField", "ff"))))
   }
 
 
   //class/interface/abstract class Body
   val TmplBody: Parser[Seq[ClazzTree]] = P("{" ~/ TmplBlock ~ `}`)
 
-  val VarDefine = P((`=` ~/ StatCtx.Expr).?)
+  val VarDefine: Parser[FieldDefine]= P((`=` ~/ StatCtx.Expr).?).map(i => FieldDefine(i.getOrElse(Element("FieldDefine"))))
 
-  val FunDef = {
+  val FunDef: Parser[MethodDefine] = {
     val Body = P(WL ~ OneNLMax ~ "{" ~ Block ~ "}")
-    P(FunSig ~~ Body.?)
+    P(FunSig ~~ Body.?).map(i => MethodDefine("MethodDefine"))
   }
 
   val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Dcl)

@@ -1,6 +1,6 @@
 package com.github.chengpohi.parser.java.syntax
 
-import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, ClazzTree, Field}
+import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, ClazzTree, Field, FieldDefine, Method, MethodDefine}
 import fastparse.noApi._
 
 trait Types extends Core {
@@ -9,9 +9,9 @@ trait Types extends Core {
 
   def TypeExpr: Parser[Any]
 
-  def VarDefine: Parser[Any]
+  def VarDefine: Parser[FieldDefine]
 
-  def FunDef: Parser[Any]
+  def FunDef: Parser[MethodDefine]
 
   def ArrayExpr: Parser[Any]
 
@@ -21,7 +21,14 @@ trait Types extends Core {
     val AccessQualifier = P("[" ~/ (`this` | Id) ~ "]")
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
-  val Dcl: Parser[ClazzTree] = P(Pass ~ Type.rep.! ~ Id.rep(sep = ",".~/) ~ (FunDef | VarDefine).?).map(i => Field(i._1))
+  val Dcl: Parser[ClazzTree] = P(Pass ~ Type.! ~ Id.! ~ (FunDef | VarDefine).?).map {
+    case i@(modifier: String, name: String, f: Option[Any]) => {
+      f match {
+        case Some(i: FieldDefine) => Field(modifier, name)
+        case Some(i: MethodDefine) => Method(modifier, name)
+      }
+    }
+  }
 
   val Mod = P(LocalMod | AccessMod | `override`).!.map(AccessModifier)
 

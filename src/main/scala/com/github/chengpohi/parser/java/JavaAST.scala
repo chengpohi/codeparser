@@ -17,10 +17,17 @@ object JavaAST {
   case class AccessModifier(value: String) extends AnyVal with ClazzTree
 
   case class ClazzElements(value: (ClazzName, Seq[ClazzTree])) extends AnyVal with ClazzTree
-  case class Field(value: String*) extends AnyVal with ClazzTree
+
+  case class Field(value: (String, String)) extends AnyVal with ClazzTree
+
+  case class FieldDefine(value: ClazzTree) extends AnyVal with ClazzTree
+
+  case class Element(value: String) extends AnyVal with ClazzTree
 
   case class Import(value: String) extends AnyVal with ClazzTree
 
-  case class Method(value: String) extends AnyVal with ClazzTree
+  case class Method(value: (String, String)) extends AnyVal with ClazzTree
+
+  case class MethodDefine(value: String) extends AnyVal with ClazzTree
 
 }
