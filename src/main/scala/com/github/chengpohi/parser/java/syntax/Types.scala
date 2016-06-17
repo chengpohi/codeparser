@@ -1,6 +1,6 @@
 package com.github.chengpohi.parser.java.syntax
 
-import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, ClazzTree, Field, FieldDefine, Method, MethodDefine}
+import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, ClazzTree, Constructor, Field, FieldDefine, Method, MethodDefine}
 import fastparse.noApi._
 
 trait Types extends Core {
@@ -22,12 +22,16 @@ trait Types extends Core {
     P((`public` | `private` | `protected`) ~ AccessQualifier.?)
   }
   val Dcl: Parser[ClazzTree] = P(Pass ~ Type.! ~ Id.! ~ (FunDef | VarDefine).?).map {
-    case i@(modifier: String, name: String, f: Option[Any]) => {
+    case i@(defType: String, name: String, f: Option[Any]) => {
       f match {
-        case Some(i: FieldDefine) => Field(modifier, name)
-        case Some(i: MethodDefine) => Method(modifier, name)
+        case Some(i: FieldDefine) => Field(defType, name)
+        case Some(i: MethodDefine) => Method(defType, name)
       }
     }
+  }
+
+  val Construct: Parser[ClazzTree] = P(Pass ~ Id.! ~ FunDef) map {
+    case i@(name: String, f: MethodDefine) => Constructor(name)
   }
 
   val Mod = P(LocalMod | AccessMod | `override`).!.map(AccessModifier)
@@ -53,7 +57,7 @@ trait Types extends Core {
 
   val SimpleType: Parser[Any] = {
     val BasicType = P(TypeId ~ ArrayExpr.?)
-    P(BasicType ~ TypeArgs.?)
+    P(TypeArgs.? ~ BasicType ~ TypeArgs.?)
   }
 
   val TypeArgs = P("<" ~ Type.rep(sep = ",".~/) ~ ">")

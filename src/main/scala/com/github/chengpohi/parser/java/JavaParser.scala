@@ -16,17 +16,15 @@ class JavaParser extends Core with Types with Exprs {
   val TmplBlock: Parser[Seq[ClazzTree]] = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep ~ BlockDef).map(i => i._3)
-    //val TmplStat = P(Prelude ~ BlockDef).map(i => i._3)
     val TmplStat = P(Prelude | StatCtx.Expr).map(i => i)
 
 
     P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => i._2)
-    //P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => Seq(Field(("TestField", "ff"))))
   }
 
 
   //class/interface/abstract class Body
-  val TmplBody: Parser[Seq[ClazzTree]] = P("{" ~/ TmplBlock ~ `}`)
+  val TmplBody: ClazzTrees = P("{" ~/ TmplBlock ~ `}`)
 
   val VarDefine: Parser[FieldDefine]= P((`=` ~/ StatCtx.Expr).?).map(i => FieldDefine(i.getOrElse(Element("FieldDefine"))))
 
@@ -35,20 +33,21 @@ class JavaParser extends Core with Types with Exprs {
     P(FunSig ~~ Body.?).map(i => MethodDefine("MethodDefine"))
   }
 
-  val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Dcl)
+  val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Construct | Dcl)
 
   val ClsDef = {
     P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzElements(ClazzName(i._1), i._3.getOrElse(Seq())))
   }
 
-  val Constrs = P((WL ~ Constr).rep(1, `implements`.~/))
-  val NamedTmpl = P(Constrs ~ TmplBody.?)
-  //TODO super class and super interface
-  val DefTmpl: Parser[Seq[ClazzTree]] = P((`extends` | `implements`).? ~ TmplBody)
-  val AnonTmpl = P(NamedTmpl | TmplBody)
+  val Constrs = P((WL ~ Constr).rep(1, `implements`.~/)).map(i => EMPTY_CLAZZ_TREES)
+  val NamedTmpl: ClazzTrees = P(Constrs ~ TmplBody.?).map(i => i._2.getOrElse(EMPTY_CLAZZ_TREES))
+  val DefTmpl: ClazzTrees = P((`extends` | `implements`).? ~ AnonTmpl | TmplBody)
+  val AnonTmpl: ClazzTrees = P(NamedTmpl | TmplBody)
 
-  val InterfaceDef = P(`interface` ~/ Id.! ~ TypeArgList.? ~ DefTmpl.?).map(i => ClazzName(i._1))
-  val EnumDef = P(`enum` ~/ Id.! ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`).map(i => ClazzName(i._1))
+  val InterfaceDef = P(`interface` ~/ Id.! ~ TypeArgList.? ~ DefTmpl.?)
+    .map(i => ClazzElements(ClazzName(i._1), EMPTY_CLAZZ_TREES))
+  val EnumDef = P(`enum` ~/ Id.! ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`)
+    .map(i => ClazzElements(ClazzName(i._1), EMPTY_CLAZZ_TREES))
 
   val Constr = P(AnnotType)
 

@@ -1,13 +1,10 @@
 package com.github.chengpohi.parser
 
-import com.github.chengpohi.parser.java.JavaAST.ClazzName
 import com.github.chengpohi.parser.java.JavaParser
 import com.github.chengpohi.util.FileUtils._
 import fastparse.core.Parsed
 import fastparse.core.Parsed.Success
 import org.scalatest.FlatSpec
-
-import scala.collection.mutable.ArrayBuffer
 
 /**
   * codeparser

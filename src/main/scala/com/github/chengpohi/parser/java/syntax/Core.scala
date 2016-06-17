@@ -1,5 +1,7 @@
 package com.github.chengpohi.parser.java.syntax
 
+import com.github.chengpohi.parser.java.JavaAST.ClazzTree
+
 import scala.language.implicitConversions
 
 trait Core extends Literals {
@@ -102,4 +104,6 @@ trait Core extends Literals {
     val IdPath: Parser[Any] = P(Id ~ ("..." | ("." ~ PostDotCheck ~/ (`this` | Id)).rep) ~ ("." ~ ThisPath).?)
     P(ThisPath | IdPath)
   }
+  
+  type ClazzTrees = Parser[Seq[ClazzTree]]
 }

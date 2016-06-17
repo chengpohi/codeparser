@@ -28,6 +28,10 @@ object JavaAST {
 
   case class Method(value: (String, String)) extends AnyVal with ClazzTree
 
+  case class Constructor(value: String) extends AnyVal with ClazzTree
+
   case class MethodDefine(value: String) extends AnyVal with ClazzTree
 
+  val EMPTY_CLAZZ_TREES = Seq[ClazzTree]()
+  val EMPTY_ELEMENT = Element("EMPTY_ELEMENT")
 }
