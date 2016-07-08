@@ -1,6 +1,6 @@
 package com.github.chengpohi.parser
 
-import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, Clazz, ClazzName, Constructor, Element, Field, Method}
+import com.github.chengpohi.parser.java.JavaAST.{AccessModifier, Clazz, ClazzName, ClazzTree, Constructor, Elements, Field, Method}
 import com.github.chengpohi.parser.java.JavaParser
 import com.github.chengpohi.util.FileUtils._
 import fastparse.core.Parsed
@@ -54,24 +54,10 @@ class JavaParserTest extends FlatSpec {
 
   "Java Parser" should "parse java classes" in {
     val testDir = "/Users/xiachen/IdeaProjects/9dev/"
-    walkFiles(testDir).filter(p => p.getFileName.toString.endsWith(".java")).foreach(f => {
-      println(f.toString)
-      check(readTestFile(f))
+    walkFiles(testDir).filter(p => p.getFileName.toString.endsWith(".java")).zipWithIndex.foreach(f => {
+      println(f._2 + " " +  f._1.toString)
+      check(readTestFile(f._1))
     })
-  }
-
-  "Java Parser" should "generate java ast tree" in {
-    val testClassSource: String = readTestFile("/ast.java")
-    val targetTree = Some(ArrayBuffer(
-      Clazz(AccessModifier("public"),
-        ClazzName("Test"),
-        ArrayBuffer(
-          Constructor("Test"),
-          Field(("String", "a")),
-          Element("element"),
-          Method(("void", "a")))
-      )))
-    checkAST(testClassSource, targetTree)
   }
 
   def check(input: String) = {

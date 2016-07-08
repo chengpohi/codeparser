@@ -13,18 +13,18 @@ class JavaParser extends Core with Types with Exprs {
 
   import WhitespaceApi._
 
-  val TmplBlock: Parser[Seq[ClazzTree]] = {
+  val TmplBlock: Parser[ClazzTree] = {
     //class state or annotation
     val Prelude = P((Annot ~ OneNLMax).rep ~ (Mod ~/ Pass).rep ~ BlockDef).map(i => i._3)
     val TmplStat = P(Prelude | StatCtx.Expr).map(i => i)
 
 
-    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => i._2)
+    P(BlockLambda.? ~ Semis.? ~ TmplStat.repX(sep = Semis) ~ Semis.?).map(i => Elements(i._2:_*))
   }
 
 
   //class/interface/abstract class Body
-  val TmplBody: ClazzTrees = P("{" ~/ TmplBlock ~ `}`)
+  val TmplBody: Parser[ClazzTree] = P("{" ~/ TmplBlock ~ `}`)
 
   val VarDefine: Parser[FieldDefine]= P((`=` ~/ StatCtx.Expr).?).map(i => FieldDefine(i.getOrElse(Element("FieldDefine"))))
 
@@ -33,21 +33,21 @@ class JavaParser extends Core with Types with Exprs {
     P(FunSig ~~ Body.?).map(i => MethodDefine("MethodDefine"))
   }
 
-  val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Construct | Dcl)
+  val BlockDef: Parser[ClazzTree] = P(InterfaceDef | EnumDef | ClsDef | Construct | Dcl | TmplBody)
 
   val ClsDef = {
-    P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzElements(ClazzName(i._1), i._3.getOrElse(Seq())))
+    P(`class` ~/ Id.! ~ GenericArgList.? ~ DefTmpl.?).map(i => ClazzElements(ClazzName(i._1), i._3.getOrElse(null)))
   }
 
   val Constrs = P((WL ~ Constr).rep(1, `implements`.~/)).map(i => EMPTY_CLAZZ_TREES)
-  val NamedTmpl: ClazzTrees = P(Constrs ~ TmplBody.?).map(i => i._2.getOrElse(EMPTY_CLAZZ_TREES))
-  val DefTmpl: ClazzTrees = P((`extends` | `implements`).? ~ AnonTmpl | TmplBody)
-  val AnonTmpl: ClazzTrees = P(NamedTmpl | TmplBody)
+  val NamedTmpl: Parser[ClazzTree] = P(Constrs ~ TmplBody.?).map(i => i._2.getOrElse(null))
+  val DefTmpl: Parser[ClazzTree] = P((`extends` | `implements`).? ~ AnonTmpl | TmplBody)
+  val AnonTmpl: Parser[ClazzTree] = P(NamedTmpl | TmplBody)
 
   val InterfaceDef = P(`interface` ~/ Id.! ~ TypeArgList.? ~ DefTmpl.?)
-    .map(i => ClazzElements(ClazzName(i._1), EMPTY_CLAZZ_TREES))
+    .map(i => ClazzElements(ClazzName(i._1), null))
   val EnumDef = P(`enum` ~/ Id.! ~ "{" ~/ BlockLambda.? ~ Semis.? ~ Id.repX(sep = ",") ~ ";".? ~ TmplBlock.? ~ `}`)
-    .map(i => ClazzElements(ClazzName(i._1), EMPTY_CLAZZ_TREES))
+    .map(i => ClazzElements(ClazzName(i._1), null))
 
   val Constr = P(AnnotType)
 
@@ -56,10 +56,10 @@ class JavaParser extends Core with Types with Exprs {
   val TopStatSeq: Parser[Any] = {
     //annotation and class statement
     //Annotation capture, class capture, mod
-    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.? ~ (InterfaceDef | ClsDef | EnumDef))
+    val Tmpl = P((Annot ~~ OneNLMax).rep ~ Mod.rep ~ (InterfaceDef | ClsDef | EnumDef))
       .map(i => {
-        val clazzElements: (ClazzName, Seq[ClazzTree]) = i._3.asInstanceOf[ClazzElements].value
-        Clazz(i._2.getOrElse(AccessModifier("public")), clazzElements._1, clazzElements._2)
+        val clazzElements: (ClazzName, ClazzTree) = i._3.asInstanceOf[ClazzElements].value
+        Clazz(i._2, clazzElements._1, clazzElements._2)
       })
     val TopStat = P(Pkg | Import | Tmpl)
     P(TopStat.repX(1, Semis))
